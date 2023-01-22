@@ -26,8 +26,6 @@ contract CompanyDao is Ownable {
     function registerBounty(address bountyAddress) public {
 
         require(bounties[bountyAddress] == false, "Bounty already registered");
-
-        // probably get this changed to enum from the bounty contract
         bounties[bountyAddress] = true;
     }
 
