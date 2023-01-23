@@ -35,7 +35,6 @@ contract Bounty is Ownable {
     address public bountyHost;
     address public tokenAddress;
 
-    uint256 public maxPool;
     uint256 public startTime;
     uint256 public endTime;
     bytes32 public metaDataID;
@@ -43,7 +42,7 @@ contract Bounty is Ownable {
     mapping(bytes32 => Core.Submission) public submissions;
 
     // Initialize contract relevant bounty data fields
-    constructor(address bountyHost_, address tokenAddress_, uint256 maxPool_, uint256 endTimeStamp_, bytes32 metaDataID_, uint256 maxSubmissions_) {
+    constructor(address bountyHost_, address tokenAddress_, uint256 endTimeStamp_, bytes32 metaDataID_, uint256 maxSubmissions_) {
         // TODO - Consider specifying minimual bounty active lifetime
         // TODO - Validate metadata ID
         require(endTimeStamp_ > block.timestamp, "End timestamp must be greater than the start timestamp");
@@ -51,8 +50,6 @@ contract Bounty is Ownable {
 
         bountyHost = bountyHost_;
         tokenAddress = tokenAddress_;
-
-        maxPool = maxPool_;
 
         startTime = block.timestamp;
         endTime = endTimeStamp_;
@@ -69,12 +66,6 @@ contract Bounty is Ownable {
         }
 
         return BountyStatus.Active; 
-    }
-
-    // TODO - Make amount an ERC-20 
-    // increasePool increase the current rewards pool
-    function increasePool(uint256 amount) public onlyOwner {
-        maxPool += amount;
     }
 
     function increaseDeadline(uint256 newDeadline) public onlyOwner {
