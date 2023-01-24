@@ -69,16 +69,9 @@ contract Bounty is Ownable {
         return BountyStatus.Active; 
     }
 
-    function increaseDeadline(uint256 newDeadline) public onlyOwner {
-        require(newDeadline > endTime, "New deadline cannot be less than the one already set");
-        require(getStatus() != BountyStatus.Closed, "Bounty must be active for a deadline to be increased");
-
-        endTime = newDeadline;
-    }
-
     // TODO - Make collatoral an ERC-20 token
     // ** Submission logic functionality **/   
-    function submitVulnerability(address beneficiary, bytes32 storageID, uint256 collatoral) public returns (bytes32) {
+    function submitVulnerability(address beneficiary, bytes32 vulnStorageID) public returns (bytes32) {
         require(submissionCount <= maxSubmissions-1, "Submission limit has currently been exceeded");
         require(beneficiary != bountyHost, "You cannot submit vulnerabilites as bounty host");
 
@@ -90,12 +83,12 @@ contract Bounty is Ownable {
             
         // TODO - Add logic to validate storage ID is Filecoin CID using Marketplace APIs
         
-        Core.SubmissionMetaData memory metaData_ = Core.SubmissionMetaData(msg.sender, storageID, block.timestamp, Core.SubmissionStatus.Review);
+        Core.SubmissionMetaData memory metaData_ = Core.SubmissionMetaData(msg.sender, vulnStorageID, block.timestamp, Core.SubmissionStatus.Review);
         
         // Compute UID of vulnerability submission
-        bytes32 id = sha256(abi.encodePacked(beneficiary, storageID));
+        bytes32 id = sha256(abi.encodePacked(beneficiary, vulnStorageID));
         if (submissions[id].isValue) {
-            revert("A vulnerability submission has already been made for provided beneficiary x storageID");
+            revert("A vulnerability submission has already been made for provided beneficiary x vulnStorageID");
         }
 
         submissions[id] = Core.Submission(metaData_, true);
@@ -120,6 +113,10 @@ contract Bounty is Ownable {
     }
 
     // TODO - Implement fund recovery / fallback functionality
+
+    function getSubmissionID(address beneficiary, bytes32 storageID) external view returns (bytes32) {
+        return sha256(abi.encodePacked(beneficiary, storageID));
+    } 
 }
 
 
