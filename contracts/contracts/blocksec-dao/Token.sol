@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.13;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/ownership/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 library Helpers {
@@ -28,11 +28,12 @@ contract BlockSecToken is ERC20, Ownable {
     function stakeForBounty(address account, uint256 amount, address bounty) onlyOwner {
         // TODO - Call bounty contract to ensure amount is above set stake threshold
 
-        require(balances[msg.sender] >= amount, "Caller must have enough");
+        require(balances[account] >= amount, "Caller must have enough");
         
-        balances[msg.sender] -= amount;
+        balances[account] -= amount;
 
         LockEntry entry = LockEntry(amount, unlockTimestamp, bounty);
 
+        emit Transfer(account, address(0), amount);
     }
 }
