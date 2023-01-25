@@ -14,13 +14,13 @@ library Lib {
     }
 }
 
-contract BlockSecToken is ERC20, Ownable {
+contract WhiteHatToken is ERC20, Ownable {
     mapping(address => mapping(address => mapping(bytes32 => Lib.StakeEntry))) stakeRegistry;
 
     uint8 constant maxAccountLocks = 10;
     uint256 minimumStake;
 
-    constructor(uint256 initialSupply, uint256 _minimumStake, address owner) ERC20("BlockSec", "BLKSEC") {
+    constructor(uint256 initialSupply, uint256 _minimumStake, address owner) ERC20("WhiteHat", "WHT") {
         _mint(msg.sender, initialSupply);
         _transferOwnership(owner);
         
@@ -47,12 +47,6 @@ contract BlockSecToken is ERC20, Ownable {
 
         delete stakeRegistry[bountyAddress][account][vulnID];
     }
-
-    // TODO - batch claim stake 
-    // function batchClaimStake(address account, address bountyAddress, bytes32[] vulnIDs) external {
-        
-        
-    // }
 
     function claimStake(address account, address bountyAddress, bytes32 vulnID) external {
         require(stakeRegistry[bountyAddress][account][vulnID].amount > 0, "No stake entry for provided parameters");
