@@ -14,13 +14,17 @@ contract CompanyDao is Ownable {
     // also, solidity funkiness for this mapping
     mapping (address => bool) bounties;
 
-    constructor(string memory _title, string memory _description){
+    address public addressOfCompany;
+
+    constructor(string memory _title, string memory _description, address _addressOfCompany){
 
         require(bytes(_title).length > 0, "title cannot be empty");
         require(bytes(_description).length > 0, "description cannot be empty");
+        require(_addressOfCompany == address(_addressOfCompany), "address of company is invalid");
 
         title = _title;
         description = _description;
+        addressOfCompany = _addressOfCompany;
     }
 
     function registerBounty(address bountyAddress) public {
@@ -35,6 +39,10 @@ contract CompanyDao is Ownable {
 
     function updateDescription(string memory newDescription) public onlyOwner {
         description = newDescription;
+    }
+
+    function updateAddressOfCompany(address newAddressOfCompany) public onlyOwner {
+        addressOfCompany = newAddressOfCompany;
     }
 
 }

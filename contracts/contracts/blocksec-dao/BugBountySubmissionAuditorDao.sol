@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BugBountyAuditorDao is Ownable {
+contract BugBountySubmissionAuditorDao is Ownable {
 
     string public title;
 
@@ -11,6 +11,8 @@ contract BugBountyAuditorDao is Ownable {
     string public description;
 
     mapping (address => bool) bountiesReviewed;
+    mapping (address => bool) membersOfDao;
+    uint256 public numberOfMembers;
 
     constructor(string memory _title, string memory _description){
 
@@ -21,10 +23,24 @@ contract BugBountyAuditorDao is Ownable {
         description = _description;
     }
 
-    function registerBountyToBeReviewed(address bountyAddress) public {
+    function registerBountyToBeReviewed(address bountyAddress) public onlyOwner {
 
         require(bountiesReviewed[bountyAddress] == false, "Bounty already registered");
         bountiesReviewed[bountyAddress] = true;
+    }
+
+    function addMemberOfDao(address auditorAddress) public onlyOwner {
+
+        require(membersOfDao[auditorAddress] == false, "Auditor already registered");
+        membersOfDao[auditorAddress] = true;
+        numberOfMembers +=1;
+    }
+
+    function removeMemberOfDao(address auditorAddress) public onlyOwner {
+
+        require(membersOfDao[auditorAddress] == true, "Auditor is not registered");
+        delete membersOfDao[auditorAddress];
+        numberOfMembers -=1;
     }
 
     function updateTitle(string memory newTitle) public onlyOwner {
