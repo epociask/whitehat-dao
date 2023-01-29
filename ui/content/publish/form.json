@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "title": "Vulnerability Submission",
+    "fields": [
+
+      {
+        "name": "name",
+        "label": "Title",
+        "placeholder": "Title of the vulnerability",
+        "required": true
+      },
+      {
+        "name": "description",
+        "label": "Description",
+        "help": "Add a thorough description with as much detail as possible. You can use [Markdown](https://daringfireball.net/projects/markdown/basics). You can change the description at any time. If you provide personal data, please note that it will remain in the transaction history. ",
+        "type": "textarea",
+        "required": true
+      },
+      {
+        "name": "vulnUpload",
+        "label": "Upload PDF of the vulnerability submission",
+        "help": "Upload PDF of the vulnerability submission",
+        "type": "file",
+        "required": true
+      },
+      {
+        "name": "dockerImage",
+        "label": "Docker Image",
+        "help": "Please select an image to run your algorithm.",
+        "type": "boxSelection",
+        "options": [
+          "populated from algorithmContainerPresets in Publish/_constants"
+        ],
+        "required": true
+      },
+      {
+        "name": "dockerImageCustom",
+        "label": "Custom Docker Image",
+        "placeholder": "e.g. oceanprotocol/algo_dockers:node-vibrant or quay.io/startx/mariadb",
+        "help": "Provide the name and the tag of a public Docker hub image or the custom image if you have it hosted in a 3rd party repository",
+        "type": "container",
+        "required": true
+      },
+      {
+        "name": "dockerImageChecksum",
+        "label": "Docker Image Checksum",
+        "placeholder": "e.g. sha256:xiXqb7Vet0FbN9q0GFMgUdi5C22wjJT0i2G6lYKC2jl6QxkKzVz7KaPDgqfTMjNF",
+        "help": "Provide the checksum(DIGEST) of your docker image.",
+        "required": true
+      },
+      {
+        "name": "dockerImageCustomEntrypoint",
+        "label": "Docker Image Entrypoint",
+        "placeholder": "e.g. python $ALGO",
+        "help": "Provide the entrypoint for your algorithm.",
+        "required": true
+      },
+      {
+        "name": "termsAndConditions",
+        "label": "Terms & Conditions",
+        "type": "checkbox",
+        "options": ["I agree to the Terms and Conditions"],
+        "required": true
+      }
+    ]
+  },
+  "submission": {
+    "title": "Submit"
+  }
+}

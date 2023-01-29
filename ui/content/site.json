@@ -1,0 +1,13 @@
+{
+  "siteTitle": "Whitehat Datadao",
+  "siteTagline": "Below are all the bounties that you'd ever want to play with!",
+  "siteUrl": "https://wallpaperaccess.com/full",
+  "siteImage": "https://wallpaperaccess.com/full/512720.png",
+
+  "menu": [
+    {
+      "name": "Create new Dao",
+      "link": "/publish/1"
+    }
+  ]
+}
