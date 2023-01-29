@@ -159,13 +159,13 @@ export default function HomePage(): ReactElement {
                 <h2>Active Bug Bounties</h2>
                 {web3Loading || loadingCompanyData ? <div className={styles.loaderWrap}>
                     <Loader />
-                </div> : activeBounties.map((assetWithPrice) => (
+                </div> : activeBounties.map((bounty) => (
                     <AssetTeaser
-                        name={assetWithPrice.title}
-                        companyTitle={assetWithPrice.companyTitle}
-                        description={assetWithPrice.description}
-                        owner={"assetWithPrice.owner"}
-                        bountyAddress={assetWithPrice.address}
+                        name={bounty.title}
+                        bountyTitle={bounty.title}
+                        description={bounty.description}
+                        bountyOwner={bounty.bountyHost}
+                        bountyAddress={bounty.address}
                         id={0}
                         chainId={80001}
                         type={"access"}

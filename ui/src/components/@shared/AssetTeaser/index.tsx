@@ -1,29 +1,32 @@
-import React, { ReactElement } from 'react'
-import Link from 'next/link'
-import Dotdotdot from 'react-dotdotdot'
-import Price from '@shared/Price'
-import removeMarkdown from 'remove-markdown'
-import Publisher from '@shared/Publisher'
-import AssetType from '@shared/AssetType'
-import NetworkName from '@shared/NetworkName'
-import styles from './index.module.css'
-import { getServiceByName } from '@utils/ddo'
-import { useUserPreferences } from '@context/UserPreferences'
-import { formatNumber } from '@utils/numbers'
+import React, { ReactElement, useState} from 'react';
+import Link from 'next/link';
+import Dotdotdot from 'react-dotdotdot';
+import NetworkName from '@shared/NetworkName';
+import styles from './index.module.css';
+import Modal from "@shared/atoms/Modal";
+import {useWeb3} from "@context/Web3";
+import { title } from 'process';
 
 export declare type AssetTeaserProps = {
   name: string,
   type: string,
   description: string,
-  owner: string,
+  bountyOwner: string,
   bountyAddress: string,
-  companyTitle: string,
+  bountyTitle: string,
   chainId: number,
   id: number,
 }
 
-export default function AssetTeaser({id, chainId, name, type, description, owner, bountyAddress, companyTitle}: AssetTeaserProps): ReactElement {
+function getBountyDescription(bountyAddress: string) {
+  
+}
 
+export default function AssetTeaser({id, chainId, name, type, description, bountyOwner, bountyAddress, bountyTitle}: AssetTeaserProps): ReactElement {
+  const [isBountyOpen, setIsBountyOpen] = useState(false)
+
+  let explorerAddress: string = "https://mumbai.polygonscan.com/address/"+bountyAddress;
+  
   return (
     <article className={`${styles.teaser} ${styles[type]}`}>
       {/*<Link href={`/asset/${id}`}>*/}
@@ -34,7 +37,7 @@ export default function AssetTeaser({id, chainId, name, type, description, owner
               className={styles.typeLabel}
             />
             <div className={styles.typeLabel}>
-              {companyTitle}
+              {bountyTitle}
             </div>
           </aside>
           <header className={styles.header}>
@@ -45,8 +48,32 @@ export default function AssetTeaser({id, chainId, name, type, description, owner
           <footer className={styles.footer}>
             <span className={styles.typeLabel}>
               <Link href={`/publish/1?address=${bountyAddress}`}>
-                <a className={styles.teaser}>Submit Vuln</a>
+                <a className={styles.teaser}>Submit Vuln    </a>
               </Link>
+              <a className={styles.teaser} onClick = {() => setIsBountyOpen(true)}>
+                Explore Bounty
+              </a>
+              <Modal
+                  title={"Explore Bounty"}
+                  isOpen={isBountyOpen}
+                  onToggleModal={() => setIsBountyOpen(false)}
+                    >
+
+              <h1>
+              {name}
+              </h1>
+              <p>
+              {description}
+              </p>
+
+              <p>
+                Bounty Address: <a href={explorerAddress}>{bountyAddress}</a>
+              </p>
+              <p>
+                Bounty Owner: <a href={explorerAddress}>{bountyOwner}</a>
+              </p>
+
+              </Modal>
             </span>
             <span className={styles.typeLabel} />
           </footer>

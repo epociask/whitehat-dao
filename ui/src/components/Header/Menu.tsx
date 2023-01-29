@@ -428,8 +428,9 @@ export default function Menu(): ReactElement {
             from: accountId
         });
 
-        let companyDaoAddresses_ = await companyFactoryContract.methods.getCompanyDaos().call();
-        setCompanyDaoAddresses(companyDaoAddresses_.concat(["select"]));
+        let displayList = ["select"].concat(await companyFactoryContract.methods.getCompanyDaos().call());
+
+        setCompanyDaoAddresses(displayList);
         setIsDialogLoaded(true);
 
     }
@@ -459,6 +460,9 @@ export default function Menu(): ReactElement {
                         isOpen={isDialogOpen}
                         onToggleModal={() => setIsDialogOpen(false)}
                     >
+                        <p>
+                            Please enter the relevant Bounty fields in below and hit submit once ready to deploy.
+                        </p>
                         <div className={styles.meta}>
 
                             {isAlert.text ? <Alert text={isAlert.text} state={isAlert.type} /> : ""}
@@ -466,7 +470,7 @@ export default function Menu(): ReactElement {
                             {!isDialogLoaded ? <Loader /> : <form>
                                     <Input
                                         name="company"
-                                        label="CompanyDao"
+                                        label="Company Dao"
                                         help="The Company DAO you want to create the bounty under"
                                         type="select"
                                         value={selectedCompany}
