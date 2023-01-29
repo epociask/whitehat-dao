@@ -6,11 +6,10 @@ import styles from './index.module.css'
 import {useWeb3} from '@context/Web3'
 import AssetTeaser from "@shared/AssetTeaser";
 import {AbiItem} from "web3-utils/types";
-import {array} from "yup";
 import Loader from "@shared/atoms/Loader";
-import {de} from "date-fns/locale";
+import CompanyTeaser from '@shared/CompanyTeaser'
 import AuditorDaoTeaser from '@shared/AuditorDaoTeaser'
-import { auditorDAOAddresses, auditorDaoAbi } from '../../../app.config'
+import {auditorDAOAddresses, auditorDaoAbi, companyDaoAbi, bountyAbi, companyFactoryDaoAbi, companyFactoryDao} from '../../../app.config'
 
 
 export default function HomePage(): ReactElement {
@@ -21,8 +20,11 @@ export default function HomePage(): ReactElement {
     const [queryMostAllocation, setQueryMostAllocation] = useState<SearchQuery>()
     const {accountId, web3, web3Loading} = useWeb3()
     const [activeBounties, setActiveBounties] = useState([]);
+    const [activeCompanies, setActiveCompanies] = useState([]);
     const [loadingAuditorInfo, setLoadingAuditorInfo] = useState(true);
     const [auditorInfo, setAuditorInfo] = useState([]);
+    const [loadingCompanyData, setLoadingCompanyData] = useState(true);
+
 
     useEffect(() => {
         const baseParams = {
@@ -57,40 +59,63 @@ export default function HomePage(): ReactElement {
         } as BaseQueryParams
         setQueryMostAllocation(generateBaseQuery(baseParamsAllocation))
 
-
-        setActiveBounties([{
-            "id": "did:op:284c6ab84b78aeec77b5a348b3e476f065109cc29ada8b2642ca81970e4b038d",
-            "chainId": 137,
-            "metadata": {
-                "additionalInformation": {
-                    "termsAndConditions": true
-                },
-                "author": "Poupou",
-                "created": "2023-01-22T17:25:43Z",
-                "description": "This file contains the transactions of all the contributors to Gitcoin GR15, Fantom and Unicef Round as well as some alpha round contributions",
-                "license": "https://market.oceanprotocol.com/terms",
-                "links": [
-                    "https://huggingface.co/datasets/Poupou/Gitcoin-Grant-DataBuilder/blob/main/transactions.zip"
-                ],
-                "name": "Gitcoin Grant Contributor transactions",
-                "tags": [
-                    "sybils",
-                    "gitcoin",
-                    "grant-contributor-transactions"
-                ],
-                "type": "dataset",
-                "updated": "2023-01-22T17:25:43Z"
-            },
-            "nft": {
-                "owner": "0x85c1bBDC1B6A199e0964cb849deb59aEF3045eDd",
-            },
-        }])
-
         if (!web3Loading){
             fetchAuditorDaoData(auditorDAOAddresses, auditorDaoAbi);
+            loadCompanyData();
+        }
+    }, [chainIds, web3Loading]);
+
+    async function loadCompanyData(){
+
+        let _activeCompanies = []
+        let _activeBounties = []
+        let i=0;
+        let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoAbi, companyFactoryDao, {
+            from: accountId
+        });
+
+        let companyDaoAddresses = await companyFactoryContract.methods.getCompanyDaos().call();
+
+        for (const address in companyDaoAddresses){
+                let companyContract = new web3.eth.Contract(companyDaoAbi, companyDaoAddresses[address], {
+                    from: accountId
+                });
+                let title = await companyContract.methods.title().call();
+                let description = await companyContract.methods.description().call();
+                let addressOfCompany = await companyContract.methods.addressOfCompany().call();
+                let _activeBounties_ = await companyContract.methods.getBounties().call();
+
+
+                _activeCompanies.push({
+                    id: address,
+                    title: title,
+                    description: description,
+                    addressOfCompany: addressOfCompany
+                });
+
+                if (_activeBounties_.length > 0){
+                    for (const bounty in _activeBounties_){
+
+                        let bountyContract = new web3.eth.Contract(bountyAbi, _activeBounties_[bounty], {
+                            from: accountId
+                        });
+
+                        _activeBounties.push({
+                            companyTitle: title,
+                            title: await bountyContract.methods.title().call(),
+                            description: await bountyContract.methods.description().call(),
+                            address: _activeBounties_[bounty],
+                        });
+
+                    }
+                }
+                i+=1;
         }
 
-    }, [chainIds, web3Loading])
+        setActiveCompanies(_activeCompanies);
+        setActiveBounties(_activeBounties);
+        setLoadingCompanyData(false);
+    }
     async function fetchAuditorDaoData(auditorDAOAddresses: string[], AuditorDaoABI: AbiItem[]){
         let tempHolder = []
         await new Promise(r => setTimeout(r, 2000));
@@ -111,22 +136,39 @@ export default function HomePage(): ReactElement {
             })
             setLoadingAuditorInfo(false);
         }
-
         setAuditorInfo(tempHolder)
     }
-
 
     return (
         <>
             <section className={styles.section}>
+                <h2>Companies with Active Bounties</h2>
+                {web3Loading || loadingAuditorInfo ? <div className={styles.loaderWrap}>
+                    <Loader />
+                </div> : activeCompanies.map((eachAuditorDao) => (
+                    <CompanyTeaser
+                        title={eachAuditorDao.title}
+                        id={eachAuditorDao.id}
+                        description={eachAuditorDao.description}
+                        addressOfCompany={eachAuditorDao.addressOfCompany}
+                    />
+                ))}
+            </section>
+
+            <section className={styles.section}>
                 <h2>Active Bug Bounties</h2>
-                {activeBounties.map((assetWithPrice) => (
+                {web3Loading || loadingCompanyData ? <div className={styles.loaderWrap}>
+                    <Loader />
+                </div> : activeBounties.map((assetWithPrice) => (
                     <AssetTeaser
-                        asset={assetWithPrice}
-                        key={assetWithPrice.id}
-                        noPublisher={true}
-                        noDescription={false}
-                        noPrice={true}
+                        name={assetWithPrice.title}
+                        companyTitle={assetWithPrice.companyTitle}
+                        description={assetWithPrice.description}
+                        owner={"assetWithPrice.owner"}
+                        bountyAddress={assetWithPrice.address}
+                        id={0}
+                        chainId={80001}
+                        type={"access"}
                     />
                 ))}
             </section>

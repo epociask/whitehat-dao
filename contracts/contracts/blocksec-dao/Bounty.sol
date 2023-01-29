@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./companyDao.sol";
 
 library Core {
     // TODO - Investigate additional status states
@@ -11,7 +12,7 @@ library Core {
 
     struct SubmissionMetaData {
         address whiteHat;
-        bytes32 vulnStorageID;
+        string vulnStorageID;
         uint256 timeStamp;
         SubmissionStatus status;
     }
@@ -37,12 +38,16 @@ contract Bounty is Ownable {
 
     uint256 public startTime;
     uint256 public endTime;
-    bytes32 public metaDataID;
-    
+    string public metaDataID;
+
+    string public title;
+    string public description;
+
     mapping(bytes32 => Core.Submission) public submissions;
 
     // Initialize contract relevant bounty data fields
-    constructor(address bountyHost_, address tokenAddress_, uint256 endTimeStamp_, bytes32 metaDataID_, uint256 maxSubmissions_) {
+    constructor(address bountyHost_, address tokenAddress_, uint256 endTimeStamp_,
+        string memory metaDataID_, uint256 maxSubmissions_, string memory title_, string memory description_) {
         // TODO - Consider specifying minimual bounty active lifetime
         // TODO - Validate metadata ID
         require(endTimeStamp_ > block.timestamp, "End timestamp must be greater than the start timestamp");
@@ -56,8 +61,13 @@ contract Bounty is Ownable {
         endTime = endTimeStamp_;
 
         metaDataID = metaDataID_;
-
         maxSubmissions = maxSubmissions_;
+
+        title = title_;
+        description = description_;
+
+        CompanyDao cd = CompanyDao(bountyHost_);
+        cd.registryBounty(address(this));
     }
 
     // getStatus returns the current contract bounty status
@@ -66,7 +76,7 @@ contract Bounty is Ownable {
             return BountyStatus.Closed;
         }
 
-        return BountyStatus.Active; 
+        return BountyStatus.Active;
     }
 
     function increaseDeadline(uint256 newDeadline) public onlyOwner {
@@ -77,21 +87,21 @@ contract Bounty is Ownable {
     }
 
     // TODO - Make collatoral an ERC-20 token
-    // ** Submission logic functionality **/   
-    function submitVulnerability(address beneficiary, bytes32 storageID, uint256 collatoral) public returns (bytes32) {
+    // ** Submission logic functionality **/
+    function submitVulnerability(address beneficiary, string memory storageID, uint256 collatoral) public returns (bytes32) {
         require(submissionCount <= maxSubmissions-1, "Submission limit has currently been exceeded");
         require(beneficiary != bountyHost, "You cannot submit vulnerabilites as bounty host");
 
         // TODO - Validate beneficiary has provided collatoral to Data DAO
 
-            // 1 - Instantiate DAO contract
+        // 1 - Instantiate DAO contract
 
-            // 2 - Call DAO contract to lock beneficiary collatoral
-            
+        // 2 - Call DAO contract to lock beneficiary collatoral
+
         // TODO - Add logic to validate storage ID is Filecoin CID using Marketplace APIs
-        
+
         Core.SubmissionMetaData memory metaData_ = Core.SubmissionMetaData(msg.sender, storageID, block.timestamp, Core.SubmissionStatus.Review);
-        
+
         // Compute UID of vulnerability submission
         bytes32 id = sha256(abi.encodePacked(beneficiary, storageID));
         if (submissions[id].isValue) {
@@ -117,6 +127,14 @@ contract Bounty is Ownable {
         }
 
         return submissions[id].metaData;
+    }
+
+    function setTitle(string memory title_) public {
+        title = title_;
+    }
+
+    function setDescription(string memory description_) public {
+        description = description_;
     }
 
     // TODO - Implement fund recovery / fallback functionality

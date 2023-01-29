@@ -16,6 +16,7 @@ module.exports = {
 
   // List of all supported chainIds. Used to populate the Chains user preferences list.
   chainIdsSupported: [1, 137, 56, 246, 1285, 5, 80001],
+
   auditorDAOAddresses: ["0x28717B5680D4143b89c02141DcDB8171C967e466"],
   auditorDaoAbi: [
     {
@@ -191,7 +192,7 @@ module.exports = {
       "type": "function"
     }
   ],
-  companyDaoAddress: ["0x73985e7B19412d81A3699bb3a90255366830D3f5"],
+
   companyDaoAbi: [
     {
       "inputs": [
@@ -234,6 +235,77 @@ module.exports = {
       "type": "event"
     },
     {
+      "inputs": [],
+      "name": "addressOfCompany",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "bounty",
+          "type": "address"
+        }
+      ],
+      "name": "bountyExists",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "description",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBounties",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -241,7 +313,7 @@ module.exports = {
           "type": "address"
         }
       ],
-      "name": "registerBounty",
+      "name": "registryBounty",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -251,6 +323,19 @@ module.exports = {
       "name": "renounceOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "title",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -304,60 +389,9 @@ module.exports = {
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "addressOfCompany",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "description",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "title",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
     }
   ],
+
   bountyAbi: [
     {
       "inputs": [
@@ -377,14 +411,24 @@ module.exports = {
           "type": "uint256"
         },
         {
-          "internalType": "bytes32",
+          "internalType": "string",
           "name": "metaDataID_",
-          "type": "bytes32"
+          "type": "string"
         },
         {
           "internalType": "uint256",
           "name": "maxSubmissions_",
           "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "title_",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description_",
+          "type": "string"
         }
       ],
       "stateMutability": "nonpayable",
@@ -424,6 +468,19 @@ module.exports = {
     },
     {
       "inputs": [],
+      "name": "description",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "endTime",
       "outputs": [
         {
@@ -456,9 +513,9 @@ module.exports = {
           "type": "address"
         },
         {
-          "internalType": "string",
+          "internalType": "bytes32",
           "name": "storageID",
-          "type": "string"
+          "type": "bytes32"
         }
       ],
       "name": "getSubmission",
@@ -525,9 +582,9 @@ module.exports = {
       "name": "metaDataID",
       "outputs": [
         {
-          "internalType": "bytes32",
+          "internalType": "string",
           "name": "",
-          "type": "bytes32"
+          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -580,6 +637,32 @@ module.exports = {
     {
       "inputs": [],
       "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "description_",
+          "type": "string"
+        }
+      ],
+      "name": "setDescription",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "title_",
+          "type": "string"
+        }
+      ],
+      "name": "setTitle",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -687,6 +770,19 @@ module.exports = {
     },
     {
       "inputs": [],
+      "name": "title",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "tokenAddress",
       "outputs": [
         {
@@ -712,7 +808,197 @@ module.exports = {
       "type": "function"
     }
   ],
-  bountyAddress: ["0xF6bF231744C5F6F44bb9782aA718827cBb01B0fb"],
+
+  companyFactoryDao: "0x1F7A7a7E925aacc2331a8181EB4A0C84e27e9317",
+  companyFactoryDaoAbi: [
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "companyWalletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "createCompanyDao",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getCompanyDaos",
+      "outputs": [
+        {
+          "internalType": "contract CompanyDao[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+
+  bountyFactoryAbi: [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "bountyHost_",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenAddress_",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "endTimeStamp_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "metaDataID_",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxSubmissions_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "title_",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description_",
+          "type": "string"
+        }
+      ],
+      "name": "addNewBounty",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  bountyFactory: "0xbD3eA30906A151cc6c2ADFf5ab3772e3098f268B",
 
   infuraProjectId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'xxx',
 

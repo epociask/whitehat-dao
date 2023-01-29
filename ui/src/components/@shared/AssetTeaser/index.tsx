@@ -12,74 +12,46 @@ import { useUserPreferences } from '@context/UserPreferences'
 import { formatNumber } from '@utils/numbers'
 
 export declare type AssetTeaserProps = {
-  asset: AssetExtended
-  noPublisher?: boolean
-  noDescription?: boolean
-  noPrice?: boolean
+  name: string,
+  type: string,
+  description: string,
+  owner: string,
+  bountyAddress: string,
+  companyTitle: string,
+  chainId: number,
+  id: number,
 }
 
-export default function AssetTeaser({
-  asset,
-  noPublisher,
-  noDescription,
-  noPrice
-}: AssetTeaserProps): ReactElement {
-  const { name, type, description } = asset.metadata
-  const accessType = 'access'
-  const { owner } = asset.nft
+export default function AssetTeaser({id, chainId, name, type, description, owner, bountyAddress, companyTitle}: AssetTeaserProps): ReactElement {
 
   return (
     <article className={`${styles.teaser} ${styles[type]}`}>
-      <Link href={`/asset/${asset.id}`}>
+      {/*<Link href={`/asset/${id}`}>*/}
         <a className={styles.link}>
           <aside className={styles.detailLine}>
-            <AssetType
-              className={styles.typeLabel}
-              type={type}
-              accessType={accessType}
-            />
             <NetworkName
-              networkId={asset.chainId}
+              networkId={chainId}
               className={styles.typeLabel}
             />
+            <div className={styles.typeLabel}>
+              {companyTitle}
+            </div>
           </aside>
           <header className={styles.header}>
             <Dotdotdot tagName="h1" clamp={3} className={styles.title}>
               {name.slice(0, 200)}
             </Dotdotdot>
-            {!noPublisher && <Publisher account={owner} minimal />}
           </header>
-          {!noDescription && (
-            <div className={styles.content}>
-              <Dotdotdot tagName="p" clamp={3}>
-                {removeMarkdown(description?.substring(0, 300) || '')}
-              </Dotdotdot>
-            </div>
-          )}
           <footer className={styles.footer}>
-            {asset.views && asset.views > 0 ? (
-              <span className={styles.typeLabel}>
-                {asset.views < 0 ? (
-                  'N/A'
-                ) : (
-                  <>
-                    <strong>{asset.views}</strong>{' '}
-                    {asset.views === 1 ? 'view' : 'views'}
-                  </>
-                )}
-              </span>
-            ) : null}
-
             <span className={styles.typeLabel}>
-              <Link href={`/publish/1?id=${asset.id}`}>
-                        <a className={styles.teaser}>Submit Vuln</a>
+              <Link href={`/publish/1?address=${bountyAddress}`}>
+                <a className={styles.teaser}>Submit Vuln</a>
               </Link>
-                    </span>
+            </span>
             <span className={styles.typeLabel} />
-
           </footer>
         </a>
-      </Link>
+      {/*</Link>*/}
     </article>
   )
 }
