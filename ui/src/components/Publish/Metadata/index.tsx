@@ -1,6 +1,6 @@
 import {BoxSelectionOption} from '@shared/FormInput/InputElement/BoxSelection'
 import Input from '@shared/FormInput'
-import {Field, useField, useFormikContext} from 'formik'
+import {Field, FormikContextType, useField, useFormikContext} from 'formik'
 import React, {FormEvent, ReactElement, useEffect, useState} from 'react'
 import content from '../../../../content/publish/form.json'
 import {getFieldContent} from '@utils/form'
@@ -11,11 +11,13 @@ import {companyDaoAbi, bountyAbi, bountyAddress} from "../../../../app.config";
 import {useWeb3} from "@context/Web3";
 import {ethers} from "ethers";
 import {sleep} from "@utils/index";
+import {FormPublishData} from "../_types";
 
 export default function MetadataFields(): ReactElement {
     const {accountId, web3, web3Loading, web3Provider} = useWeb3()
 
     const [isSubmitting, setIsSubmitting] = useState<boolean>()
+    const {values}: FormikContextType<FormPublishData> = useFormikContext()
 
     async function handleSubmit(e: FormEvent){
         e.preventDefault()
@@ -61,35 +63,17 @@ export default function MetadataFields(): ReactElement {
             from: accountId
         });
 
-        let submitRes = await contract.methods.submitVulnerability(accountId,
-            output.data.Hash, 123).send();
-        console.log(submitRes)
+        let submitRes = await contract.methods.submitVulnerability(accountId, output.data.Hash, 123).send();
+        console.log(submitRes, values)
     }
 
     return (
         <>
-            <Field
-                {...getFieldContent('name', content.metadata.fields)}
-                component={Input}
-                name="metadata.name"
-            />
-            <Field
-                {...getFieldContent('description', content.metadata.fields)}
-                component={Input}
-                name="metadata.description"
-                rows={7}
-            />
-
-            <input type="file" onChange={e=>deploy(e)} className="InputElement_input__5roKb"/>
+            <div className="FormInput_field__crPEL"><label className="Label_label__AiTEy">Please select the PDF with Vuln Report
+            </label><input type="file" onChange={e=>deploy(e)} className="InputElement_input__5roKb"/>
+            </div>
 
             <br/>
-            <br/>
-
-            <Field
-                {...getFieldContent('termsAndConditions', content.metadata.fields)}
-                component={Input}
-                name="metadata.termsAndConditions"
-            />
 
             <Button
                 style="primary"

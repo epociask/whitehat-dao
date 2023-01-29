@@ -12,6 +12,8 @@ import Input from "@shared/FormInput";
 import Loader from "@shared/atoms/Loader";
 import {useWeb3} from "@context/Web3";
 import {AbiItem} from "web3-utils/types";
+import {companyFactoryDao, companyFactoryDaoAbi, bountyFactory, bountyFactoryAbi} from "../../../app.config";
+import Alert from "@shared/atoms/Alert";
 
 const Wallet = loadable(() => import('./Wallet'))
 
@@ -372,10 +374,14 @@ function MenuLink({item}: { item: MenuItem }) {
 export default function Menu(): ReactElement {
     const {siteContent} = useMarketMetadata()
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [isDialogLoaded, setIsDialogLoaded] = useState(false)
+    const [companyDaoAddresses, setCompanyDaoAddresses] = useState([])
     const [isSignupOpen, setIsSignupOpen] = useState(false)
     const [isSignupOpenLoading, setIsSignupOpenLoading] = useState(true)
-    const [bugBountyTitle, setBugBountyTitle] = useState("")
+    const [bugBountyTitle, setBugBountyTitle] = useState("");
+    const [selectedCompany, setSelectedCompany] = useState("");
     const [bugBountyDescription, setBugBountyDescription] = useState("")
+    const [isAlert, setIsAlert] = useState({})
     const { accountId, web3 } = useWeb3()
 
 
@@ -389,8 +395,43 @@ export default function Menu(): ReactElement {
         return parseInt(result) && parseInt(result) > 0
     }
 
-    async function submitDetails() {
-        console.log("async function called.")
+    async function submitDetails(e) {
+        e.preventDefault();
+        setIsDialogLoaded(false);
+        const contract = new web3.eth.Contract(bountyFactoryAbi, bountyFactory, {
+            from: accountId
+        });
+
+        try{
+            const resCreate = await contract.methods.addNewBounty(selectedCompany, selectedCompany, Math.floor(Date.now()),
+                "testtttttttesttttttttesttttttt", 1223, bugBountyTitle, bugBountyDescription).send({from: accountId});
+
+            console.log(resCreate);
+            setIsAlert({
+                text: "Bug Bounty Created",
+                type: "success"
+            });
+        }
+        catch (e) {
+            console.log(e);
+            setIsAlert({
+                text: "Couldn't create BugBounty",
+                type: "error"
+            });
+        }
+        setIsDialogLoaded(true);
+    }
+
+    async function getContractAddress(){
+        setIsDialogOpen(true);
+        let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoAbi, companyFactoryDao, {
+            from: accountId
+        });
+
+        let companyDaoAddresses_ = await companyFactoryContract.methods.getCompanyDaos().call();
+        setCompanyDaoAddresses(companyDaoAddresses_.concat(["select"]));
+        setIsDialogLoaded(true);
+
     }
 
     return (
@@ -410,7 +451,7 @@ export default function Menu(): ReactElement {
                 ))}
 
                 <li key="123">
-                    <a className={styles.link} onClick={() => setIsDialogOpen(true)}>
+                    <a className={styles.link} onClick={() => getContractAddress()}>
                         Create Bug Bounty
                     </a>
                     <Modal
@@ -419,34 +460,51 @@ export default function Menu(): ReactElement {
                         onToggleModal={() => setIsDialogOpen(false)}
                     >
                         <div className={styles.meta}>
-                            <form>
-                                <Input
-                                    name="title"
-                                    label="Bug Bounty program"
-                                    help="The title of the Bug Bounty Program"
-                                    type="text"
-                                    value={bugBountyTitle}
-                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                        setBugBountyTitle(e.target.value)
-                                    }
-                                    size="small"
-                                />
-                                <Input
-                                    name="description"
-                                    label="Bug Bounty program description"
-                                    help="The Description of the Bug Bounty Program"
-                                    type="textarea"
-                                    value={bugBountyDescription}
-                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                        setBugBountyDescription(e.target.value)
-                                    }
-                                    size="small"
-                                />
 
-                                <Button style="text" size="small" onClick={() => submitDetails()}>
-                                    Submit New Program
-                                </Button>
-                            </form>
+                            {isAlert.text ? <Alert text={isAlert.text} state={isAlert.type} /> : ""}
+                            <br/><br/>
+                            {!isDialogLoaded ? <Loader /> : <form>
+                                    <Input
+                                        name="company"
+                                        label="CompanyDao"
+                                        help="The Company DAO you want to create the bounty under"
+                                        type="select"
+                                        value={selectedCompany}
+                                        options={companyDaoAddresses}
+                                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                            setSelectedCompany(e.target.value)
+                                        }
+                                        size="small"
+                                    />
+
+                                    <Input
+                                        name="title"
+                                        label="Bug Bounty program"
+                                        help="The title of the Bug Bounty Program"
+                                        type="text"
+                                        value={bugBountyTitle}
+                                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                            setBugBountyTitle(e.target.value)
+                                        }
+                                        size="small"
+                                    />
+                                    <Input
+                                        name="description"
+                                        label="Bug Bounty program description"
+                                        help="The Description of the Bug Bounty Program"
+                                        type="textarea"
+                                        value={bugBountyDescription}
+                                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                            setBugBountyDescription(e.target.value)
+                                        }
+                                        size="small"
+                                    />
+
+                                    <Button style="text" size="small" onClick={(e) => submitDetails(e)}>
+                                        Submit New Program
+                                    </Button>
+                                </form>
+                            }
                         </div>
                     </Modal>
                 </li>
