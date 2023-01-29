@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./bounty.sol";
 
 contract CompanyDao is Ownable {
 
@@ -10,9 +11,9 @@ contract CompanyDao is Ownable {
     // Can be in IPFS and handled via UI to make it more versatile. if we have time to change later.
     string public description;
 
-    // stores the status of all the bounties ever registered and their current status.
+    // stores bounties
     // also, solidity funkiness for this mapping
-    mapping (address => bool) bounties;
+    address[] bounties;
 
     address public addressOfCompany;
 
@@ -27,10 +28,41 @@ contract CompanyDao is Ownable {
         addressOfCompany = _addressOfCompany;
     }
 
-    function registerBounty(address bountyAddress) public {
+    function getBounties() public view returns (address[] memory){
+        uint256 length;
+        for (uint i = 0; i < bounties.length; i++) {
+            Bounty cdc = Bounty(bounties[i]);
+            if(uint(cdc.getStatus()) == 0){
+                length +=1;
+            }
+        }
 
-        require(bounties[bountyAddress] == false, "Bounty already registered");
-        bounties[bountyAddress] = true;
+        address[] memory activeBounties = new address[](length);
+
+        uint j=0;
+        for (uint i = 0; i < bounties.length; i++) {
+            Bounty cdc = Bounty(bounties[i]);
+            if(uint(cdc.getStatus()) == 0){
+                activeBounties[j] = bounties[i];
+                j+=1;
+            }
+
+        }
+        return activeBounties;
+    }
+
+    function bountyExists(address bounty) public view returns (bool) {
+        for (uint i = 0; i < bounties.length; i++) {
+            if (bounties[i] == bounty) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function registryBounty(address bountyAddress) public onlyOwner{
+        require(bountyExists(bountyAddress) == false, "Bounty already reigstered.");
+        bounties.push(payable(bountyAddress));
     }
 
     function updateTitle(string memory newTitle) public onlyOwner {
