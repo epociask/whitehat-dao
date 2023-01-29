@@ -66,6 +66,7 @@ contract Bounty is Ownable {
         title = title_;
         description = description_;
 
+        setOwner(bountyHost_);
         CompanyDao cd = CompanyDao(bountyHost_);
         cd.registryBounty(address(this));
     }
