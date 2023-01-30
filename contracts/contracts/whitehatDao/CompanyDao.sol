@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./bounty.sol";
+import "./Bounty.sol";
 
 contract CompanyDao is Ownable {
 
@@ -60,7 +60,7 @@ contract CompanyDao is Ownable {
         return false;
     }
 
-    function registryBounty(address bountyAddress) public onlyOwner{
+    function registryBounty(address bountyAddress) public onlyOwner {
         require(bountyExists(bountyAddress) == false, "Bounty already reigstered.");
         bounties.push(payable(bountyAddress));
     }

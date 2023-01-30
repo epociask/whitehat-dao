@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./companyDao.sol";
+import "./CompanyDao.sol";
 
 library Core {
     // TODO - Investigate additional status states
@@ -66,7 +66,6 @@ contract Bounty is Ownable {
         title = title_;
         description = description_;
 
-        setOwner(bountyHost_);
         CompanyDao cd = CompanyDao(bountyHost_);
         cd.registryBounty(address(this));
     }

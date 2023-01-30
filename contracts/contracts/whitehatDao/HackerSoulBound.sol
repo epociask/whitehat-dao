@@ -4,28 +4,44 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract SoulBoundToken is ERC721, Ownable {
+library Lib {
+    enum Reputation{Noob, Pro, Elite, Wizzard, Buterin}
+    enum Role {Hacker, Company, DAOParticipant}
+}
+
+interface IHackerSBT {
+    function balanceOf(address owner) external view returns (uint256);
+    function safeMint(address to, Lib.Role role) external;
+}
+
+contract HackerSoulBound is ERC721, Ownable {
+
     using Counters for Counters.Counter;
 
+    mapping(uint256 => Lib.Role) private roles;
     Counters.Counter private _tokenIdCounter;
-    address private companyDao;
+    address private submissionAuditor;
 
-    enum Reputation{Noob, Pro, Elite, Wizzard, Buterin}
 
-    constructor(address _companyDao) ERC721("WhiteHatSBT", "WHSBT") {
-        companyDao = _companyDao;
-        transferOwnership(companyDao);
+
+    constructor(address _submissionAuditorDao) ERC721("WhiteHatSBT", "WHSBT") {
+        submissionAuditor = _submissionAuditorDao;
+        transferOwnership(submissionAuditor);
     }
 
-    function safeMint(address to) public onlyOwner {
+    function safeMint(address to, Lib.Role role) external onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+
+        roles[tokenId] = role;
     }
 
-    function getReputation(uint256 tokenId) public view returns (Reputation) {
+
+
+    function getReputation(uint256 tokenId) public view returns (Lib.Reputation) {
         // TODO - Build derivation logic
-        return Reputation.Noob;
+        return Lib.Reputation.Noob;
     }
 
     function burn(uint256 tokenId) external {

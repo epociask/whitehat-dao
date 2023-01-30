@@ -67,14 +67,19 @@ export default function HomePage(): ReactElement {
 
     async function loadCompanyData(){
 
-        let _activeCompanies = []
-        let _activeBounties = []
+        let _activeCompanies = [];
+        let _activeBounties = [];
+        
         let i=0;
+
+        console.log("Loading company data");
         let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoAbi, companyFactoryDao, {
             from: accountId
         });
-
         let companyDaoAddresses = await companyFactoryContract.methods.getCompanyDaos().call();
+        
+        console.log("Company DAO Addresses", companyDaoAddresses);
+        console.log(companyDaoAddresses.length);
 
         for (const address in companyDaoAddresses){
                 let companyContract = new web3.eth.Contract(companyDaoAbi, companyDaoAddresses[address], {
@@ -112,6 +117,7 @@ export default function HomePage(): ReactElement {
                 i+=1;
         }
 
+        console.log("Setting active companies and bounties");
         setActiveCompanies(_activeCompanies);
         setActiveBounties(_activeBounties);
         setLoadingCompanyData(false);
