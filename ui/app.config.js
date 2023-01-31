@@ -17,7 +17,7 @@ module.exports = {
   // List of all supported chainIds. Used to populate the Chains user preferences list.
   chainIdsSupported: [1, 137, 56, 246, 1285, 5, 80001],
 
-  auditorDAOAddresses: ["0x28717B5680D4143b89c02141DcDB8171C967e466"],
+  auditorDAOAddresses: ["0x1710838653C04814163Aefcb3145eaEA092a3743"],
   auditorDaoAbi: [
     {
       "inputs": [
@@ -28,6 +28,13 @@ module.exports = {
         }
       ],
       "name": "addMemberOfDao",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "registerAsHacker",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -104,6 +111,19 @@ module.exports = {
       "inputs": [
         {
           "internalType": "address",
+          "name": "_hackerSBT",
+          "type": "address"
+        }
+      ],
+      "name": "setSbtFactory",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -147,6 +167,19 @@ module.exports = {
           "internalType": "string",
           "name": "",
           "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "hackerSBT",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -392,7 +425,7 @@ module.exports = {
     }
   ],
 
-  bountyAbi: [
+  bountyContractAbi: [
     {
       "inputs": [
         {
@@ -809,7 +842,7 @@ module.exports = {
     }
   ],
 
-  companyFactoryDao: "0x1F7A7a7E925aacc2331a8181EB4A0C84e27e9317",
+  companyFactoryDao: "0xe6b75f517E5C536E6BA1Dd2A79F7E9B23dd5f6E1",
   companyFactoryDaoAbi: [
     {
       "inputs": [
@@ -900,7 +933,7 @@ module.exports = {
       "type": "function"
     }
   ],
-
+  bountyFactory: "0x442ff217e7ACCaCF19755a8aB6EAB92bDFb861b3",
   bountyFactoryAbi: [
     {
       "anonymous": false,
@@ -998,8 +1031,6 @@ module.exports = {
       "type": "function"
     }
   ],
-  bountyFactory: "0xbD3eA30906A151cc6c2ADFf5ab3772e3098f268B",
-
   infuraProjectId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'xxx',
 
   defaultDatatokenTemplateIndex: 2,

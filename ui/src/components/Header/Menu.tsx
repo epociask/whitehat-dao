@@ -12,7 +12,7 @@ import Input from "@shared/FormInput";
 import Loader from "@shared/atoms/Loader";
 import {useWeb3} from "@context/Web3";
 import {AbiItem} from "web3-utils/types";
-import {companyFactoryDao, companyFactoryDaoAbi, bountyFactory, bountyFactoryAbi} from "../../../app.config";
+import {auditorDAOAddresses, auditorDaoAbi, companyFactoryDao, companyFactoryDaoAbi, bountyFactory, bountyFactoryAbi, companyDaoAbi} from "../../../app.config";
 import Alert from "@shared/atoms/Alert";
 
 const Wallet = loadable(() => import('./Wallet'))
@@ -21,339 +21,6 @@ declare type MenuItem = {
     name: string
     link: string
 }
-
-const erc721 = [
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "approved",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "Approval",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "operator",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "bool",
-                "name": "approved",
-                "type": "bool"
-            }
-        ],
-        "name": "ApprovalForAll",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "Transfer",
-        "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "approve",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "balance",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "getApproved",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "operator",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "operator",
-                "type": "address"
-            }
-        ],
-        "name": "isApprovedForAll",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "name",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "ownerOf",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "safeTransferFrom",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bytes",
-                "name": "data",
-                "type": "bytes"
-            }
-        ],
-        "name": "safeTransferFrom",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "operator",
-                "type": "address"
-            },
-            {
-                "internalType": "bool",
-                "name": "_approved",
-                "type": "bool"
-            }
-        ],
-        "name": "setApprovalForAll",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes4",
-                "name": "interfaceId",
-                "type": "bytes4"
-            }
-        ],
-        "name": "supportsInterface",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "symbol",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "tokenURI",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "transferFrom",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    }
-] as AbiItem[]
 
 function MenuLink({item}: { item: MenuItem }) {
     const router = useRouter()
@@ -380,19 +47,43 @@ export default function Menu(): ReactElement {
     const [isSignupOpenLoading, setIsSignupOpenLoading] = useState(true)
     const [bugBountyTitle, setBugBountyTitle] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("");
+    const [selectedDao, setSelectedDao] = useState("");
+    const [selectedRole, setSelectedRole] = useState("");
     const [bugBountyDescription, setBugBountyDescription] = useState("")
     const [isAlert, setIsAlert] = useState({})
     const { accountId, web3 } = useWeb3()
 
 
-    async function holdsToken(contractAddress: string) {
-        const currentWallet = web3.utils.toChecksumAddress(accountId)
-        const contract = new web3.eth.Contract(erc721, contractAddress, {
-            from: accountId
-        })
+    async function submitRoleSubmission(e) {
+        e.preventDefault();
+        setIsDialogLoaded(false);
 
-        const result = await contract.methods.balanceOf(currentWallet).call()
-        return parseInt(result) && parseInt(result) > 0
+        try{ 
+            const contract = new web3.eth.Contract(auditorDaoAbi, selectedDao, {
+                from: accountId
+            });
+
+            const registerResponse = await contract.methods.registerAsHacker().send({from: accountId});
+            console.log("Register response", registerResponse);
+            setIsAlert(
+                {
+                    text: "Hacker Profile Created",
+                    type: "success",
+                }
+            )
+        
+        } catch(e) {
+            console.log(e);
+            setIsAlert(
+                {
+                    text: "Failed to Create Hacker Profile",
+                    type: "failure",
+
+                }
+            )
+        }
+        
+        setIsDialogLoaded(true);
     }
 
     async function submitDetails(e) {
@@ -402,6 +93,7 @@ export default function Menu(): ReactElement {
             from: accountId
         });
 
+        console.log("Address", selectedCompany);
         try{
             const resCreate = await contract.methods.addNewBounty(selectedCompany, selectedCompany, Math.floor(Date.now()),
                 "testtttttttesttttttttesttttttt", 1223, bugBountyTitle, bugBountyDescription).send({from: accountId});
@@ -428,8 +120,9 @@ export default function Menu(): ReactElement {
             from: accountId
         });
 
-        let companyDaoAddresses_ = await companyFactoryContract.methods.getCompanyDaos().call();
-        setCompanyDaoAddresses(companyDaoAddresses_.concat(["select"]));
+        let displayList = ["select"].concat(await companyFactoryContract.methods.getCompanyDaos().call());
+
+        setCompanyDaoAddresses(displayList);
         setIsDialogLoaded(true);
 
     }
@@ -459,6 +152,9 @@ export default function Menu(): ReactElement {
                         isOpen={isDialogOpen}
                         onToggleModal={() => setIsDialogOpen(false)}
                     >
+                        <p>
+                            Please enter the relevant Bounty fields in below and hit submit once ready to deploy.
+                        </p>
                         <div className={styles.meta}>
 
                             {isAlert.text ? <Alert text={isAlert.text} state={isAlert.type} /> : ""}
@@ -466,7 +162,7 @@ export default function Menu(): ReactElement {
                             {!isDialogLoaded ? <Loader /> : <form>
                                     <Input
                                         name="company"
-                                        label="CompanyDao"
+                                        label="Company Dao"
                                         help="The Company DAO you want to create the bounty under"
                                         type="select"
                                         value={selectedCompany}
@@ -513,43 +209,47 @@ export default function Menu(): ReactElement {
                         Signup!
                     </a>
                     <Modal
-                        title={"Signup For Submission"}
+                        title={"Signup To Join the WhiteHat DAO!"}
                         isOpen={isSignupOpen}
                         onToggleModal={() => setIsSignupOpen(false)}
                     >
-                        <div className={styles.meta}>
-                            {isSignupOpenLoading ? <div className={styles.loaderWrap}>
-                                <Loader />
-                            </div> : <form>
-                                <Input
-                                    name="title"
-                                    label="Bug Bounty program"
-                                    help="The title of the Bug Bounty Program"
-                                    type="text"
-                                    value={bugBountyTitle}
-                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                        setBugBountyTitle(e.target.value)
-                                    }
-                                    size="small"
-                                />
-                                <Input
-                                    name="description"
-                                    label="Bug Bounty program description"
-                                    help="The Description of the Bug Bounty Program"
-                                    type="textarea"
-                                    value={bugBountyDescription}
-                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                        setBugBountyDescription(e.target.value)
-                                    }
-                                    size="small"
-                                />
+                       
+                    <div className={styles.meta}>
+                    {isAlert.text ? <Alert text={isAlert.text} state={isAlert.type} /> : ""}
 
-                                <Button style="text" size="small" onClick={() => submitDetails()}>
-                                    Submit New Program
-                                </Button>
-                            </form>}
-
-                        </div>
+                    <br/><br/>
+                    <p> Please specify the role which you'd like an SBT minted for and press Submit</p>
+                    {!isDialogLoaded ? <Loader /> : <form>
+                    <Input
+                                name="auditor Dao"
+                                label="Auditor Dao"
+                                help="The Auditor DAO you want to register under"
+                                type="select"
+                                value={selectedDao}
+                                options={["select"].concat(auditorDAOAddresses)}
+                                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                    setSelectedDao(e.target.value)
+                                }
+                                size="small"
+                            />
+                            <Input
+                                name="role"
+                                label="Role"
+                                help="The Role which you are applying for"
+                                type="select"
+                                value={selectedRole}
+                                options={["select", "hacker"]} // TODO - Pass in other roles
+                                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                    setSelectedRole(e.target.value)
+                                }
+                                size="small"
+                            />
+                            <Button style="text" size="small" onClick={(e) => submitRoleSubmission(e)}>
+                                Submit
+                            </Button>
+                        </form>
+                    }
+                    </div>
                     </Modal>
                 </li>
             </ul>
