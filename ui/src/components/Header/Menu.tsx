@@ -11,8 +11,9 @@ import Modal from "@shared/atoms/Modal";
 import Input from "@shared/FormInput";
 import Loader from "@shared/atoms/Loader";
 import {useWeb3} from "@context/Web3";
-import {AbiItem} from "web3-utils/types";
-import {auditorDAOAddresses, auditorDaoAbi, companyFactoryDao, companyFactoryDaoAbi, bountyFactory, bountyFactoryAbi, companyDaoAbi} from "../../../app.config";
+
+import { auditorDaoABI, bountyFactoryABI, companyFactoryDaoABI, sbtABI } from '@utils/abi';
+import {auditorDAOAddresses, bountyFactoryAddress, companyFactoryDaoAddress} from "../../../app.config";
 import Alert from "@shared/atoms/Alert";
 
 const Wallet = loadable(() => import('./Wallet'))
@@ -44,14 +45,43 @@ export default function Menu(): ReactElement {
     const [isDialogLoaded, setIsDialogLoaded] = useState(false)
     const [companyDaoAddresses, setCompanyDaoAddresses] = useState([])
     const [isSignupOpen, setIsSignupOpen] = useState(false)
-    const [isSignupOpenLoading, setIsSignupOpenLoading] = useState(true)
+    const [userRole, setUserRole] = useState("");
+
     const [bugBountyTitle, setBugBountyTitle] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("");
     const [selectedDao, setSelectedDao] = useState("");
     const [selectedRole, setSelectedRole] = useState("");
     const [bugBountyDescription, setBugBountyDescription] = useState("")
     const [isAlert, setIsAlert] = useState({})
-    const { accountId, web3 } = useWeb3()
+    const { accountId, web3 } = useWeb3();
+
+    async function getDappRole() {
+        console.log("Getting user dAPP role");
+
+        let auditorDaoContract = new web3.eth.Contract(auditorDaoABI, selectedDao, {
+            from: accountId,
+        });
+        
+        let sbtAddress = await auditorDaoContract.methods.hackerSBT().call();
+        
+        console.log("Got SBT Address ", sbtAddress);
+        let sbtContract = new web3.eth.Contract(sbtABI, sbtAddress, {
+            from: accountId,
+        });
+
+        try {
+            let role = await sbtContract.methods.getUserRole(accountId).call();
+            console.log("User role ", role);
+            setUserRole(role);
+            console.log("Set User role");
+
+        } catch(e) {
+            console.log("User role not set yet");
+            setUserRole("NO ROLE YET");
+        }
+
+
+    }
 
 
     async function submitRoleSubmission(e) {
@@ -59,7 +89,7 @@ export default function Menu(): ReactElement {
         setIsDialogLoaded(false);
 
         try{ 
-            const contract = new web3.eth.Contract(auditorDaoAbi, selectedDao, {
+            const contract = new web3.eth.Contract(auditorDaoABI, selectedDao, {
                 from: accountId
             });
 
@@ -89,7 +119,7 @@ export default function Menu(): ReactElement {
     async function submitDetails(e) {
         e.preventDefault();
         setIsDialogLoaded(false);
-        const contract = new web3.eth.Contract(bountyFactoryAbi, bountyFactory, {
+        const contract = new web3.eth.Contract(bountyFactoryABI, bountyFactoryAddress, {
             from: accountId
         });
 
@@ -116,7 +146,7 @@ export default function Menu(): ReactElement {
 
     async function getContractAddress(){
         setIsDialogOpen(true);
-        let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoAbi, companyFactoryDao, {
+        let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoABI, companyFactoryDaoAddress, {
             from: accountId
         });
 
@@ -128,7 +158,7 @@ export default function Menu(): ReactElement {
     }
 
     return (
-        <nav className={styles.menu}>
+        <nav className={styles.menu} onMouseEnter={() => getDappRole()}>
             <Link href="/">
                 <a className={styles.logo}>
                     <Logo noWordmark/>
@@ -251,6 +281,11 @@ export default function Menu(): ReactElement {
                     }
                     </div>
                     </Modal>
+                </li>
+                <li key="125">
+                    <a className={styles.link}>
+                        [{userRole}]
+                    </a>
                 </li>
             </ul>
 

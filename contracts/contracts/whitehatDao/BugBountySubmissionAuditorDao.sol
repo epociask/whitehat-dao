@@ -6,16 +6,19 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./HackerSoulBound.sol";
 
 contract BugBountySubmissionAuditorDao is Ownable {
+    
+    enum Role{Hacker, CompanyDao} 
 
     string public title;
-
     // Can be in IPFS and handled via UI to make it more versatile. if we have time to change later.
     string public description;
+    uint256 public numberOfMembers;
+    address public hackerSBT;
 
     mapping (address => bool) bountiesReviewed;
     mapping (address => bool) membersOfDao;
-    uint256 public numberOfMembers;
-    address public hackerSBT;
+
+
 
     constructor(string memory _title, string memory _description){
 
@@ -32,6 +35,7 @@ contract BugBountySubmissionAuditorDao is Ownable {
 
     function registerAsHacker() public {
         require(IHackerSBT(hackerSBT).balanceOf(msg.sender) == 0, "User must have 0 SBTS to register");
+        require(role);
 
         IHackerSBT(hackerSBT).safeMint(msg.sender, Lib.Role.Hacker);
     } 
