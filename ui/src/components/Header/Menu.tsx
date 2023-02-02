@@ -11,6 +11,7 @@ import Modal from "@shared/atoms/Modal";
 import Input from "@shared/FormInput";
 import Loader from "@shared/atoms/Loader";
 import {useWeb3} from "@context/Web3";
+import {UserRole, UserRoleTitle} from 'src/@types/user';
 
 import { auditorDaoABI, bountyFactoryABI, companyFactoryDaoABI, sbtABI } from '@utils/abi';
 import {auditorDAOAddresses, bountyFactoryAddress, companyFactoryDaoAddress} from "../../../app.config";
@@ -45,12 +46,12 @@ export default function Menu(): ReactElement {
     const [isDialogLoaded, setIsDialogLoaded] = useState(false)
     const [companyDaoAddresses, setCompanyDaoAddresses] = useState([])
     const [isSignupOpen, setIsSignupOpen] = useState(false)
-    const [userRole, setUserRole] = useState("");
+    const [userRole, setUserRole] = useState(UserRoleTitle.Unknown);
 
     const [bugBountyTitle, setBugBountyTitle] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("");
-    const [selectedDao, setSelectedDao] = useState("");
-    const [selectedRole, setSelectedRole] = useState("");
+    const [selectedDao, setSelectedDao] = useState(auditorDAOAddresses[0]);
+    const [selectedRole, setSelectedRole] = useState(UserRoleTitle.Unknown);
     const [bugBountyDescription, setBugBountyDescription] = useState("")
     const [isAlert, setIsAlert] = useState({})
     const { accountId, web3 } = useWeb3();
@@ -70,14 +71,30 @@ export default function Menu(): ReactElement {
         });
 
         try {
-            let role = await sbtContract.methods.getUserRole(accountId).call();
-            console.log("User role ", role);
-            setUserRole(role);
+            let role: string = await sbtContract.methods.getUserRole(accountId).call();
+            console.log(UserRole.Hacker);
+            
+            let intRole: number = parseInt(role, 10);
+            
+            switch (intRole) {
+                case UserRole.Hacker:
+                    setUserRole(UserRoleTitle.Hacker);
+                    break;
+                
+                case UserRole.Company:
+                    setUserRole(UserRoleTitle.Company);
+                    break;
+                
+                default: // Captures NaN as well
+                    setUserRole(UserRoleTitle.Unknown);
+
+            };
             console.log("Set User role");
 
         } catch(e) {
             console.log("User role not set yet");
-            setUserRole("NO ROLE YET");
+            setUserRole(UserRole.Unknown);
+
         }
 
 
