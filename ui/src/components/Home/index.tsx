@@ -11,6 +11,7 @@ import AuditorDaoTeaser from '@shared/AuditorDaoTeaser'
 
 import {auditorDAOAddresses, bountyFactoryAddress, companyFactoryDaoAddress} from "../../../app.config";
 import { auditorDaoABI, bountyABI, companyDaoABI, companyFactoryDaoABI} from '@utils/abi';
+import NotConnectedView from "./NotConnectedView";
 
 
 export default function HomePage(): ReactElement {
@@ -62,7 +63,7 @@ export default function HomePage(): ReactElement {
         } as BaseQueryParams
         setQueryMostAllocation(generateBaseQuery(baseParamsAllocation))
 
-        if (!web3Loading){
+        if (!web3Loading && accountId){
             fetchAuditorDaoData(auditorDAOAddresses);
             loadCompanyData();
         }
@@ -75,7 +76,6 @@ export default function HomePage(): ReactElement {
         
         let i=0;
 
-        console.log("Loading company data");
         let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoABI, companyFactoryDaoAddress, {
             from: accountId
         });
@@ -150,52 +150,70 @@ export default function HomePage(): ReactElement {
 
     return (
         <>
-            <section className={styles.section}>
-                <h2>Companies with Active Bounties</h2>
-                {web3Loading || loadingAuditorInfo ? <div className={styles.loaderWrap}>
-                    <Loader />
-                </div> : activeCompanies.map((eachAuditorDao) => (
-                    <CompanyTeaser
-                        title={eachAuditorDao.title}
-                        id={eachAuditorDao.id}
-                        description={eachAuditorDao.description}
-                        addressOfCompany={eachAuditorDao.addressOfCompany}
-                    />
-                ))}
-            </section>
+            <NotConnectedView />
+            {accountId ? <>
+                <section className={styles.section}>
+                    <h2>Companies with Active Bounties</h2>
+                    {web3Loading || loadingAuditorInfo ? <div className={styles.loaderWrap}>
+                        <Loader />
+                    </div> : activeCompanies.map((eachAuditorDao) => (
+                        <CompanyTeaser
+                            title={eachAuditorDao.title}
+                            id={eachAuditorDao.id}
+                            description={eachAuditorDao.description}
+                            addressOfCompany={eachAuditorDao.addressOfCompany}
+                        />
+                    ))}
+                </section>
 
-            <section className={styles.section}>
-                <h2>Active Bug Bounties</h2>
-                {web3Loading || loadingCompanyData ? <div className={styles.loaderWrap}>
-                    <Loader />
-                </div> : activeBounties.map((bounty) => (
-                    <AssetTeaser
-                        name={bounty.title}
-                        bountyTitle={bounty.title}
-                        description={bounty.description}
-                        bountyOwner={bounty.bountyHost}
-                        bountyAddress={bounty.address}
-                        id={0}
-                        chainId={80001}
-                        type={"access"}
-                    />
-                ))}
-            </section>
+                <section className={styles.section}>
+                    <h2>Companies with Active Bounties</h2>
+                    {web3Loading || loadingAuditorInfo ? <div className={styles.loaderWrap}>
+                        <Loader />
+                    </div> : activeCompanies.map((eachAuditorDao) => (
+                        <CompanyTeaser
+                            title={eachAuditorDao.title}
+                            id={eachAuditorDao.id}
+                            description={eachAuditorDao.description}
+                            addressOfCompany={eachAuditorDao.addressOfCompany}
+                        />
+                    ))}
+                </section>
 
-            <section className={styles.section}>
-                <h2>Auditor DAOs</h2>
-                {web3Loading || loadingAuditorInfo ? <div className={styles.loaderWrap}>
-                    <Loader />
-                </div> : auditorInfo.map((eachAuditorDao) => (
-                    <AuditorDaoTeaser
-                        title={eachAuditorDao.title}
-                        id={eachAuditorDao.id}
-                        description={eachAuditorDao.description}
-                        views={eachAuditorDao.membersCount}
-                        auditorDAOAddresses={eachAuditorDao.address}
-                    />
-                ))}
-            </section>
+                <section className={styles.section}>
+                    <h2>Active Bug Bounties</h2>
+                    {web3Loading || loadingCompanyData ? <div className={styles.loaderWrap}>
+                        <Loader />
+                    </div> : activeBounties.map((bounty) => (
+                        <AssetTeaser
+                            name={bounty.title}
+                            bountyTitle={bounty.title}
+                            description={bounty.description}
+                            bountyOwner={bounty.bountyHost}
+                            bountyAddress={bounty.address}
+                            id={0}
+                            chainId={80001}
+                            type={"access"}
+                        />
+                    ))}
+                </section>
+
+                <section className={styles.section}>
+                    <h2>Auditor DAOs</h2>
+                    {web3Loading || loadingAuditorInfo ? <div className={styles.loaderWrap}>
+                        <Loader />
+                    </div> : auditorInfo.map((eachAuditorDao) => (
+                        <AuditorDaoTeaser
+                            title={eachAuditorDao.title}
+                            id={eachAuditorDao.id}
+                            description={eachAuditorDao.description}
+                            views={eachAuditorDao.membersCount}
+                            auditorDAOAddresses={eachAuditorDao.address}
+                        />
+                    ))}
+                </section>
+
+            </> : <></>}
 
         </>
     )

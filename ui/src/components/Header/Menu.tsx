@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ReactElement, useState} from 'react'
+import React, {ChangeEvent, ReactElement, useEffect, useState} from 'react'
 import Link from 'next/link'
 import loadable from '@loadable/component'
 import Logo from '@shared/atoms/Logo'
@@ -53,7 +53,7 @@ export default function Menu(): ReactElement {
     const [selectedRole, setSelectedRole] = useState("");
     const [bugBountyDescription, setBugBountyDescription] = useState("")
     const [isAlert, setIsAlert] = useState({})
-    const { accountId, web3 } = useWeb3();
+    const {accountId, web3, web3Loading, web3Provider} = useWeb3()
 
     async function getDappRole() {
         console.log("Getting user dAPP role");
@@ -79,8 +79,6 @@ export default function Menu(): ReactElement {
             console.log("User role not set yet");
             setUserRole("NO ROLE YET");
         }
-
-
     }
 
 
@@ -157,8 +155,15 @@ export default function Menu(): ReactElement {
 
     }
 
+    useEffect(() => {
+
+        if (!web3Loading && accountId){
+            getDappRole();
+        }
+    }, [web3, web3Loading])
+
     return (
-        <nav className={styles.menu} onMouseEnter={() => getDappRole()}>
+        <nav className={styles.menu}>
             <Link href="/">
                 <a className={styles.logo}>
                     <Logo noWordmark/>
