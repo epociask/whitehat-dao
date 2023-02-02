@@ -88,7 +88,7 @@ export default function Menu(): ReactElement {
                 default: // Captures NaN as well
                     setUserRole(UserRoleTitle.Unknown);
 
-            };
+            }
             console.log("Set User role");
 
         } catch(e) {
@@ -304,11 +304,12 @@ export default function Menu(): ReactElement {
                     </div>
                     </Modal>
                 </li>
-                <li key="125">
+                {userRole !== UserRoleTitle.Unknown ? <li key="125">
                     <a className={styles.link}>
                         [{userRole}]
                     </a>
-                </li>
+                </li> : <></>}
+
             </ul>
 
             <div className={styles.actions}>
