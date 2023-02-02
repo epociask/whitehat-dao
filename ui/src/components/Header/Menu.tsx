@@ -189,13 +189,13 @@ export default function Menu(): ReactElement {
             </Link>
 
             <ul className={styles.navigation}>
-                {siteContent?.menu.map((item: MenuItem) => (
-                    <li key={item.name}>
-                        <MenuLink item={item}/>
-                    </li>
-                ))}
+                {/*{siteContent?.menu.map((item: MenuItem) => (*/}
+                {/*    <li key={item.name}>*/}
+                {/*        <MenuLink item={item}/>*/}
+                {/*    </li>*/}
+                {/*))}*/}
 
-                <li key="123">
+                {accountId && (userRole === UserRoleTitle.Unknown) ? <li key="bug-bounty">
                     <a className={styles.link} onClick={() => getContractAddress()}>
                         Create Bug Bounty
                     </a>
@@ -212,51 +212,52 @@ export default function Menu(): ReactElement {
                             {isAlert.text ? <Alert text={isAlert.text} state={isAlert.type} /> : ""}
                             <br/><br/>
                             {!isDialogLoaded ? <Loader /> : <form>
-                                    <Input
-                                        name="company"
-                                        label="Company Dao"
-                                        help="The Company DAO you want to create the bounty under"
-                                        type="select"
-                                        value={selectedCompany}
-                                        options={companyDaoAddresses}
-                                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                            setSelectedCompany(e.target.value)
-                                        }
-                                        size="small"
-                                    />
+                                <Input
+                                    name="company"
+                                    label="Company Dao"
+                                    help="The Company DAO you want to create the bounty under"
+                                    type="select"
+                                    value={selectedCompany}
+                                    options={companyDaoAddresses}
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                        setSelectedCompany(e.target.value)
+                                    }
+                                    size="small"
+                                />
 
-                                    <Input
-                                        name="title"
-                                        label="Bug Bounty program"
-                                        help="The title of the Bug Bounty Program"
-                                        type="text"
-                                        value={bugBountyTitle}
-                                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                            setBugBountyTitle(e.target.value)
-                                        }
-                                        size="small"
-                                    />
-                                    <Input
-                                        name="description"
-                                        label="Bug Bounty program description"
-                                        help="The Description of the Bug Bounty Program"
-                                        type="textarea"
-                                        value={bugBountyDescription}
-                                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                            setBugBountyDescription(e.target.value)
-                                        }
-                                        size="small"
-                                    />
+                                <Input
+                                    name="title"
+                                    label="Bug Bounty program"
+                                    help="The title of the Bug Bounty Program"
+                                    type="text"
+                                    value={bugBountyTitle}
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                        setBugBountyTitle(e.target.value)
+                                    }
+                                    size="small"
+                                />
+                                <Input
+                                    name="description"
+                                    label="Bug Bounty program description"
+                                    help="The Description of the Bug Bounty Program"
+                                    type="textarea"
+                                    value={bugBountyDescription}
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                        setBugBountyDescription(e.target.value)
+                                    }
+                                    size="small"
+                                />
 
-                                    <Button style="text" size="small" onClick={(e) => submitDetails(e)}>
-                                        Submit New Program
-                                    </Button>
-                                </form>
+                                <Button style="text" size="small" onClick={(e) => submitDetails(e)}>
+                                    Submit New Program
+                                </Button>
+                            </form>
                             }
                         </div>
                     </Modal>
-                </li>
-                <li key="124">
+                </li> : <></>}
+
+                {accountId && (userRole === UserRoleTitle.Unknown) ? <li key="signup">
                     <a className={styles.link} onClick={() => setIsSignupOpen(true)}>
                         Signup!
                     </a>
@@ -265,46 +266,47 @@ export default function Menu(): ReactElement {
                         isOpen={isSignupOpen}
                         onToggleModal={() => setIsSignupOpen(false)}
                     >
-                       
-                    <div className={styles.meta}>
-                    {isAlert.text ? <Alert text={isAlert.text} state={isAlert.type} /> : ""}
 
-                    <br/><br/>
-                    <p> Please specify the role which you'd like an SBT minted for and press Submit</p>
-                    {!isDialogLoaded ? <Loader /> : <form>
-                    <Input
-                                name="auditor Dao"
-                                label="Auditor Dao"
-                                help="The Auditor DAO you want to register under"
-                                type="select"
-                                value={selectedDao}
-                                options={["select"].concat(auditorDAOAddresses)}
-                                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                    setSelectedDao(e.target.value)
-                                }
-                                size="small"
-                            />
-                            <Input
-                                name="role"
-                                label="Role"
-                                help="The Role which you are applying for"
-                                type="select"
-                                value={selectedRole}
-                                options={["select", "hacker"]} // TODO - Pass in other roles
-                                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                    setSelectedRole(e.target.value)
-                                }
-                                size="small"
-                            />
-                            <Button style="text" size="small" onClick={(e) => submitRoleSubmission(e)}>
-                                Submit
-                            </Button>
-                        </form>
-                    }
-                    </div>
+                        <div className={styles.meta}>
+                            {isAlert.text ? <Alert text={isAlert.text} state={isAlert.type} /> : ""}
+
+                            <br/><br/>
+                            <p> Please specify the role which you'd like an SBT minted for and press Submit</p>
+                            {!isDialogLoaded ? <Loader /> : <form>
+                                <Input
+                                    name="auditor Dao"
+                                    label="Auditor Dao"
+                                    help="The Auditor DAO you want to register under"
+                                    type="select"
+                                    value={selectedDao}
+                                    options={["select"].concat(auditorDAOAddresses)}
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                        setSelectedDao(e.target.value)
+                                    }
+                                    size="small"
+                                />
+                                <Input
+                                    name="role"
+                                    label="Role"
+                                    help="The Role which you are applying for"
+                                    type="select"
+                                    value={selectedRole}
+                                    options={["select", "hacker"]} // TODO - Pass in other roles
+                                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                                        setSelectedRole(e.target.value)
+                                    }
+                                    size="small"
+                                />
+                                <Button style="text" size="small" onClick={(e) => submitRoleSubmission(e)}>
+                                    Submit
+                                </Button>
+                            </form>
+                            }
+                        </div>
                     </Modal>
-                </li>
-                {userRole !== UserRoleTitle.Unknown ? <li key="125">
+                </li> : <></>}
+                {userRole !== UserRoleTitle.Unknown ?
+                    <li key="125">
                     <a className={styles.link}>
                         [{userRole}]
                     </a>
