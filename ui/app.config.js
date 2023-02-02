@@ -23,10 +23,9 @@ module.exports = {
   chainIdsSupported: [1, 137, 56, 246, 1285, 5, 80001],
 
   // Required dAPP contracts for running application
-  auditorDAOAddresses: ["0x1710838653C04814163Aefcb3145eaEA092a3743"],
-  bountyFactoryAddress: "0x442ff217e7ACCaCF19755a8aB6EAB92bDFb861b3",
-  companyFactoryDaoAddress: "0xe6b75f517E5C536E6BA1Dd2A79F7E9B23dd5f6E1",
-
+  auditorDAOAddresses: ["0xf367b517609A86e53CD0899DDD46F3C50CA0AE08"],
+  bountyFactoryAddress: "0xF8A9BBc825D5298BFB276a78EC2279Ab07ECc8fb",
+  companyFactoryDaoAddress: "0x075b00562Be1F87F5443948705fB5aD5c1deC797",
 
   infuraProjectId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'xxx',
 
