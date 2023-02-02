@@ -152,19 +152,6 @@ export default function HomePage(): ReactElement {
         <>
             <NotConnectedView />
             {accountId ? <>
-                <section className={styles.section}>
-                    <h2>Companies with Active Bounties</h2>
-                    {web3Loading || loadingAuditorInfo ? <div className={styles.loaderWrap}>
-                        <Loader />
-                    </div> : activeCompanies.map((eachAuditorDao) => (
-                        <CompanyTeaser
-                            title={eachAuditorDao.title}
-                            id={eachAuditorDao.id}
-                            description={eachAuditorDao.description}
-                            addressOfCompany={eachAuditorDao.addressOfCompany}
-                        />
-                    ))}
-                </section>
 
                 <section className={styles.section}>
                     <h2>Companies with Active Bounties</h2>
