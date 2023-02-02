@@ -23,7 +23,7 @@ module.exports = {
   chainIdsSupported: [1, 137, 56, 246, 1285, 5, 80001],
 
   // Required dAPP contracts for running application
-  auditorDAOAddresses: ["0xf367b517609A86e53CD0899DDD46F3C50CA0AE08"],
+  auditorDAOAddresses: ["0xD69BCF242950D4bE4264aacF6c245E6799B80Ce6"],
   bountyFactoryAddress: "0xF8A9BBc825D5298BFB276a78EC2279Ab07ECc8fb",
   companyFactoryDaoAddress: "0x075b00562Be1F87F5443948705fB5aD5c1deC797",
 
