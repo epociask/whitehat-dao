@@ -10,8 +10,9 @@ import CompanyTeaser from '@shared/CompanyTeaser'
 import AuditorDaoTeaser from '@shared/AuditorDaoTeaser'
 
 import {auditorDAOAddresses, bountyFactoryAddress, companyFactoryDaoAddress} from "../../../app.config";
-import { auditorDaoABI, bountyABI, companyDaoABI, companyFactoryDaoABI} from '@utils/abi';
+import {auditorDaoABI, bountyABI, companyDaoABI, companyFactoryDaoABI, sbtABI} from '@utils/abi';
 import NotConnectedView from "./NotConnectedView";
+import {UserRole, UserRoleTitle} from "../../@types/user";
 
 
 export default function HomePage(): ReactElement {
@@ -28,6 +29,7 @@ export default function HomePage(): ReactElement {
     const [loadingAuditorInfo, setLoadingAuditorInfo] = useState(true);
     const [auditorInfo, setAuditorInfo] = useState([]);
     const [loadingCompanyData, setLoadingCompanyData] = useState(true);
+    const [userRole, setUserRole] = useState(UserRoleTitle.Unknown);
 
 
     useEffect(() => {
@@ -69,6 +71,47 @@ export default function HomePage(): ReactElement {
         }
     }, [chainIds, web3Loading]);
 
+    async function getDappRole() {
+        console.log("Getting user dAPP role");
+
+        let auditorDaoContract = new web3.eth.Contract(auditorDaoABI, auditorDAOAddresses[0], {
+            from: accountId,
+        });
+
+        let sbtAddress = await auditorDaoContract.methods.hackerSBT().call();
+
+        console.log("Got SBT Address ", sbtAddress);
+        let sbtContract = new web3.eth.Contract(sbtABI, sbtAddress, {
+            from: accountId,
+        });
+
+        try {
+            let role: string = await sbtContract.methods.getUserRole(accountId).call();
+            console.log(UserRole.Hacker);
+
+            let intRole: number = parseInt(role, 10);
+
+            switch (intRole) {
+                case UserRole.Hacker:
+                    setUserRole(UserRoleTitle.Hacker);
+                    break;
+
+                case UserRole.Company:
+                    setUserRole(UserRoleTitle.Company);
+                    break;
+
+                default: // Captures NaN as well
+                    setUserRole(UserRoleTitle.Unknown);
+
+            }
+            console.log("Set User role");
+
+        } catch(e) {
+            console.log("User role not set yet");
+            setUserRole(UserRoleTitle.Unknown);
+
+        }
+    }
     async function loadCompanyData(){
 
         let _activeCompanies = [];

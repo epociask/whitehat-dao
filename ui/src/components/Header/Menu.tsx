@@ -13,8 +13,13 @@ import Loader from "@shared/atoms/Loader";
 import {useWeb3} from "@context/Web3";
 import {UserRole, UserRoleTitle} from 'src/@types/user';
 
-import { auditorDaoABI, bountyFactoryABI, companyFactoryDaoABI, sbtABI } from '@utils/abi';
-import {auditorDAOAddresses, bountyFactoryAddress, companyFactoryDaoAddress} from "../../../app.config";
+import {auditorDaoABI, bountyFactoryABI, companyFactoryDaoABI, hackerSolBoundAbi, sbtABI} from '@utils/abi';
+import {
+    auditorDAOAddresses,
+    bountyFactoryAddress,
+    companyFactoryDaoAddress,
+    hackerSolBoundAddress
+} from "../../../app.config";
 import Alert from "@shared/atoms/Alert";
 
 const Wallet = loadable(() => import('./Wallet'))
@@ -72,13 +77,12 @@ export default function Menu(): ReactElement {
 
         try {
             let role: string = await sbtContract.methods.getUserRole(accountId).call();
-            console.log(UserRole.Hacker);
-            
+
             let intRole: number = parseInt(role, 10);
-            
+
             switch (intRole) {
                 case UserRole.Hacker:
-                    setUserRole(UserRoleTitle.Hacker);
+                    setUserRole(UserRoleTitle.Company);
                     break;
                 
                 case UserRole.Company:
@@ -93,7 +97,7 @@ export default function Menu(): ReactElement {
 
         } catch(e) {
             console.log("User role not set yet");
-            setUserRole(UserRole.Unknown);
+            setUserRole(UserRoleTitle.Unknown);
 
         }
     }
@@ -195,7 +199,7 @@ export default function Menu(): ReactElement {
                 {/*    </li>*/}
                 {/*))}*/}
 
-                {accountId && (userRole === UserRoleTitle.Unknown) ? <li key="bug-bounty">
+                {accountId && (userRole === UserRoleTitle.Company) ? <li key="bug-bounty">
                     <a className={styles.link} onClick={() => getContractAddress()}>
                         Create Bug Bounty
                     </a>

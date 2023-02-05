@@ -921,10 +921,38 @@ export const companyDaoABI: AbiItem[] = [
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}
-]
+];
 
 
 export const companyFactoryDaoABI: AbiItem[] = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "title",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "companyWalletAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "hackerSBT",
+				"type": "address"
+			}
+		],
+		"name": "createCompanyDao",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
 	{
 		"anonymous": false,
 		"inputs": [
@@ -945,24 +973,21 @@ export const companyFactoryDaoABI: AbiItem[] = [
 		"type": "event"
 	},
 	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "title",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "description",
-				"type": "string"
-			},
-			{
 				"internalType": "address",
-				"name": "companyWalletAddress",
+				"name": "newOwner",
 				"type": "address"
 			}
 		],
-		"name": "createCompanyDao",
+		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -991,26 +1016,6 @@ export const companyFactoryDaoABI: AbiItem[] = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ];
