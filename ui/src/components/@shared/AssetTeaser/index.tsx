@@ -6,6 +6,9 @@ import styles from './index.module.css';
 import Modal from "@shared/atoms/Modal";
 import {useWeb3} from "@context/Web3";
 import { title } from 'process';
+import {auditorDAOAddresses} from "../../../../app.config";
+import {UserRole, UserRoleTitle} from "../../../@types/user";
+import {auditorDaoABI, sbtABI} from '@utils/abi';
 
 export declare type AssetTeaserProps = {
   name: string,
@@ -16,17 +19,17 @@ export declare type AssetTeaserProps = {
   bountyTitle: string,
   chainId: number,
   id: number,
+  userRole: string
 }
 
 function getBountyDescription(bountyAddress: string) {
   
 }
 
-export default function AssetTeaser({id, chainId, name, type, description, bountyOwner, bountyAddress, bountyTitle}: AssetTeaserProps): ReactElement {
-  const [isBountyOpen, setIsBountyOpen] = useState(false)
-
+export default function AssetTeaser({id, chainId, name, type, description, bountyOwner, bountyAddress, bountyTitle, userRole}: AssetTeaserProps): ReactElement {
+  const [isBountyOpen, setIsBountyOpen] = useState(false);
   let explorerAddress: string = "https://mumbai.polygonscan.com/address/"+bountyAddress;
-  
+
   return (
     <article className={`${styles.teaser} ${styles[type]}`}>
       {/*<Link href={`/asset/${id}`}>*/}
@@ -47,12 +50,17 @@ export default function AssetTeaser({id, chainId, name, type, description, bount
           </header>
           <footer className={styles.footer}>
             <span className={styles.typeLabel}>
-              <Link href={`/publish/1?address=${bountyAddress}`}>
-                <a className={styles.teaser}>Submit Vuln    </a>
+              {(userRole === UserRoleTitle.Hacker) && <Link href={`/publish/1?address=${bountyAddress}`}>
+                <a className={styles.teaser}>Submit Vuln&nbsp;</a>
+              </Link>}
+              <Link href="#">
+                <a className={styles.teaser} onClick = {(event) => {
+                  event.preventDefault();
+                  setIsBountyOpen(true);
+                }}>
+                  {(userRole === UserRoleTitle.Hacker) && "| "}Explore Bounty
+                </a>
               </Link>
-              <a className={styles.teaser} onClick = {() => setIsBountyOpen(true)}>
-                Explore Bounty
-              </a>
               <Modal
                   title={"Explore Bounty"}
                   isOpen={isBountyOpen}

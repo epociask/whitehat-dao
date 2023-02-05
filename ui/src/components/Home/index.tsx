@@ -67,7 +67,7 @@ export default function HomePage(): ReactElement {
 
         if (!web3Loading && accountId){
             fetchAuditorDaoData(auditorDAOAddresses);
-            loadCompanyData();
+            getDappRole();
         }
     }, [chainIds, web3Loading]);
 
@@ -87,8 +87,6 @@ export default function HomePage(): ReactElement {
 
         try {
             let role: string = await sbtContract.methods.getUserRole(accountId).call();
-            console.log(UserRole.Hacker);
-
             let intRole: number = parseInt(role, 10);
 
             switch (intRole) {
@@ -111,6 +109,7 @@ export default function HomePage(): ReactElement {
             setUserRole(UserRoleTitle.Unknown);
 
         }
+        loadCompanyData();
     }
     async function loadCompanyData(){
 
@@ -122,8 +121,14 @@ export default function HomePage(): ReactElement {
         let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoABI, companyFactoryDaoAddress, {
             from: accountId
         });
-        let companyDaoAddresses = await companyFactoryContract.methods.getCompanyDaos().call();
-        
+
+        let companyDaoAddresses = [];
+        if (userRole === UserRoleTitle.Company){
+            companyDaoAddresses = await companyFactoryContract.methods.getMyCompanyDaos().call();
+        } else{
+            companyDaoAddresses = await companyFactoryContract.methods.getCompanyDaos().call();
+        }
+
         console.log("Company DAO Addresses", companyDaoAddresses);
         console.log(companyDaoAddresses.length);
 
@@ -135,7 +140,6 @@ export default function HomePage(): ReactElement {
                 let description = await companyContract.methods.description().call();
                 let addressOfCompany = await companyContract.methods.addressOfCompany().call();
                 let _activeBounties_ = await companyContract.methods.getBounties().call();
-
 
                 _activeCompanies.push({
                     id: address,
@@ -196,7 +200,7 @@ export default function HomePage(): ReactElement {
             <NotConnectedView />
             {accountId ? <>
 
-                <section className={styles.section}>
+                {(userRole === UserRoleTitle.Hacker) && <section className={styles.section}>
                     <h2>Companies with Active Bounties</h2>
                     {web3Loading || loadingAuditorInfo ? <div className={styles.loaderWrap}>
                         <Loader />
@@ -208,10 +212,10 @@ export default function HomePage(): ReactElement {
                             addressOfCompany={eachAuditorDao.addressOfCompany}
                         />
                     ))}
-                </section>
+                </section>}
 
                 <section className={styles.section}>
-                    <h2>Active Bug Bounties</h2>
+                    <h2>{userRole === UserRoleTitle.Company ? "Your Active Bug Bounties" : "Active Bug Bounties"}</h2>
                     {web3Loading || loadingCompanyData ? <div className={styles.loaderWrap}>
                         <Loader />
                     </div> : activeBounties.map((bounty) => (
@@ -221,6 +225,7 @@ export default function HomePage(): ReactElement {
                             description={bounty.description}
                             bountyOwner={bounty.bountyHost}
                             bountyAddress={bounty.address}
+                            userRole={userRole}
                             id={0}
                             chainId={80001}
                             type={"access"}

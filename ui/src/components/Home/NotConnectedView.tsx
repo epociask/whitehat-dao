@@ -21,6 +21,9 @@ export default function NotConnectedView() {
                         <br/>
                         <br/>
                         Please connect your wallet for the awesome content here........
+                        <br/>
+                        <br/>
+                        Wanna create a company with us, just hit us up at you know where.
                     </h4>
                 </section> : <></>}
         </>

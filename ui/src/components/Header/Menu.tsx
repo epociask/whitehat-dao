@@ -13,7 +13,7 @@ import Loader from "@shared/atoms/Loader";
 import {useWeb3} from "@context/Web3";
 import {UserRole, UserRoleTitle} from 'src/@types/user';
 
-import {auditorDaoABI, bountyFactoryABI, companyFactoryDaoABI, hackerSolBoundAbi, sbtABI} from '@utils/abi';
+import {auditorDaoABI, bountyFactoryABI, companyFactoryDaoABI, sbtABI} from '@utils/abi';
 import {
     auditorDAOAddresses,
     bountyFactoryAddress,
@@ -21,6 +21,7 @@ import {
     hackerSolBoundAddress
 } from "../../../app.config";
 import Alert from "@shared/atoms/Alert";
+import {sleep} from "@utils/index";
 
 const Wallet = loadable(() => import('./Wallet'))
 
@@ -82,7 +83,7 @@ export default function Menu(): ReactElement {
 
             switch (intRole) {
                 case UserRole.Hacker:
-                    setUserRole(UserRoleTitle.Company);
+                    setUserRole(UserRoleTitle.Hacker);
                     break;
                 
                 case UserRole.Company:
@@ -144,7 +145,7 @@ export default function Menu(): ReactElement {
 
         console.log("Address", selectedCompany);
         try{
-            const resCreate = await contract.methods.addNewBounty(selectedCompany, selectedCompany, Math.floor(Date.now()),
+            const resCreate = await contract.methods.addNewBounty(selectedCompany, selectedCompany, Math.floor(Date.now() + 3600),
                 "testtttttttesttttttttesttttttt", 1223, bugBountyTitle, bugBountyDescription).send({from: accountId});
 
             console.log(resCreate);
@@ -161,6 +162,8 @@ export default function Menu(): ReactElement {
             });
         }
         setIsDialogLoaded(true);
+        await sleep(2000);
+        window.location.reload();
     }
 
     async function getContractAddress(){
