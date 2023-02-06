@@ -26,15 +26,20 @@ contract BugBountySubmissionAuditorDao is Ownable {
         description = _description;
     }
 
+    event UserRegistered(address, Lib.Role);
+
     function setSbtFactory(address _hackerSBT) public {
         hackerSBT = _hackerSBT;
     }
 
     function registerAsHacker() public {
+
         require(IHackerSBT(hackerSBT).balanceOf(msg.sender) == 0, "User must have 0 SBTS to register");
 
         IHackerSBT(hackerSBT).safeMint(msg.sender, Lib.Role.Hacker);
-    } 
+        
+        emit UserRegistered(msg.sender, Lib.Role.Hacker);
+    }
 
     function registerBountyToBeReviewed(address bountyAddress) public onlyOwner {
 
