@@ -16,12 +16,35 @@ contract CompanyDaoFactory is Ownable {
 
         CompanyDao newDao = new CompanyDao(title, description, companyWalletAddress);
 
-        IHackerSBT(hackerSBT).safeMint(companyWalletAddress, Lib.Role.Company);
+        IHackerSBT(hackerSBT).safeMintCompany(companyWalletAddress);
         companyDaos.push(newDao);
     }
 
     function getCompanyDaos() public view returns (CompanyDao[] memory){
         return companyDaos;
+    }
+
+    function getMyCompanyDaos() public view returns (CompanyDao[] memory){
+        uint256 length;
+        for (uint i = 0; i < companyDaos.length; i++) {
+            CompanyDao cd = CompanyDao(companyDaos[i]);
+            if(cd.addressOfCompany() == msg.sender){
+                length +=1;
+            }
+        }
+
+        CompanyDao[] memory myCompanyDaos = new CompanyDao[](length);
+
+        uint j=0;
+        for (uint i = 0; i < companyDaos.length; i++) {
+            CompanyDao cd = CompanyDao(companyDaos[i]);
+            if(cd.addressOfCompany() == msg.sender){
+                myCompanyDaos[j] = companyDaos[i];
+                j+=1;
+            }
+
+        }
+        return myCompanyDaos;
     }
 
 }
