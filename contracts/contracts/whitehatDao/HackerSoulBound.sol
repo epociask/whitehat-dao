@@ -16,9 +16,15 @@ interface IHackerSBT {
 
 contract HackerSoulBound is ERC721, Ownable {
 
+    struct SBTEntry {
+        bool isValue;
+        Lib.Role role;
+        uint256 tokenID;
+    }
+
     using Counters for Counters.Counter;
 
-    mapping(uint256 => Lib.Role) private roles;
+    mapping(address => SBTEntry) private entries;
     Counters.Counter private _tokenIdCounter;
     address private submissionAuditor;
 
@@ -30,11 +36,15 @@ contract HackerSoulBound is ERC721, Ownable {
     }
 
     function safeMint(address to, Lib.Role role) external onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+        require(to != address(0), "Cannot mint to NULL address");
+        require(!entries[to].isValue, "Cannot mint to account with existing SBT entry");
 
-        roles[tokenId] = role;
+        uint256 _tokenID = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, _tokenID);
+
+        SBTEntry memory entry = SBTEntry(true, role, _tokenID);
+        entries[to] = entry;
     }
 
 
@@ -56,4 +66,13 @@ contract HackerSoulBound is ERC721, Ownable {
     function _burn(uint256 tokenId) internal override(ERC721) {
         super._burn(tokenId);
     }
+
+    function getUserRole(address user) public view returns (Lib.Role) {
+        return entries[user].role;
+    }
+
+    function getUserTokenID(address user) public view returns (uint256) {
+        return entries[user].tokenID;
+    }
+
 }

@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "ES2020",
-    "lib": ["dom", "ES2020"],
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "ES2022"
+    ],
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "jsx": "preserve",
@@ -12,12 +15,24 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "paths": {
-      "@shared/*": ["./src/components/@shared/*"],
-      "@hooks/*": ["./src/@hooks/*"],
-      "@context/*": ["./src/@context/*"],
-      "@images/*": ["./src/@images/*"],
-      "@utils/*": ["./src/@utils/*"],
-      "@content/*": ["./@content/*"]
+      "@shared/*": [
+        "./src/components/@shared/*"
+      ],
+      "@hooks/*": [
+        "./src/@hooks/*"
+      ],
+      "@context/*": [
+        "./src/@context/*"
+      ],
+      "@images/*": [
+        "./src/@images/*"
+      ],
+      "@utils/*": [
+        "./src/@utils/*"
+      ],
+      "@content/*": [
+        "./@content/*"
+      ]
     },
     "baseUrl": ".",
     "strict": false,
@@ -28,6 +43,15 @@
     "esModuleInterop": true,
     "incremental": true
   },
-  "exclude": ["node_modules", ".next", "*.js"],
-  "include": ["./src/**/*", "./.jest/**/*", "./next-env.d.ts", "./content/**/*"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "*.js"
+  ],
+  "include": [
+    "./src/**/*",
+    "./.jest/**/*",
+    "./next-env.d.ts",
+    "./content/**/*"
+  ]
 }

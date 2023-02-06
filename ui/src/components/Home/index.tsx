@@ -5,20 +5,23 @@ import {SortTermOptions} from '../../@types/aquarius/SearchQuery'
 import styles from './index.module.css'
 import {useWeb3} from '@context/Web3'
 import AssetTeaser from "@shared/AssetTeaser";
-import {AbiItem} from "web3-utils/types";
 import Loader from "@shared/atoms/Loader";
 import CompanyTeaser from '@shared/CompanyTeaser'
 import AuditorDaoTeaser from '@shared/AuditorDaoTeaser'
-import {auditorDAOAddresses, auditorDaoAbi, companyDaoAbi, bountyAbi, companyFactoryDaoAbi, companyFactoryDao} from '../../../app.config'
+
+import {auditorDAOAddresses, bountyFactoryAddress, companyFactoryDaoAddress} from "../../../app.config";
+import { auditorDaoABI, bountyABI, companyDaoABI, companyFactoryDaoABI} from '@utils/abi';
 
 
 export default function HomePage(): ReactElement {
-    const {chainIds} = useUserPreferences()
 
-    const [queryLatest, setQueryLatest] = useState<SearchQuery>()
-    const [queryMostSales, setQueryMostSales] = useState<SearchQuery>()
-    const [queryMostAllocation, setQueryMostAllocation] = useState<SearchQuery>()
-    const {accountId, web3, web3Loading} = useWeb3()
+    const {chainIds} = useUserPreferences();
+
+    const [queryLatest, setQueryLatest] = useState<SearchQuery>();
+    const [queryMostSales, setQueryMostSales] = useState<SearchQuery>();
+    const [queryMostAllocation, setQueryMostAllocation] = useState<SearchQuery>();
+    const {accountId, web3, web3Loading} = useWeb3();
+
     const [activeBounties, setActiveBounties] = useState([]);
     const [activeCompanies, setActiveCompanies] = useState([]);
     const [loadingAuditorInfo, setLoadingAuditorInfo] = useState(true);
@@ -60,7 +63,7 @@ export default function HomePage(): ReactElement {
         setQueryMostAllocation(generateBaseQuery(baseParamsAllocation))
 
         if (!web3Loading){
-            fetchAuditorDaoData(auditorDAOAddresses, auditorDaoAbi);
+            fetchAuditorDaoData(auditorDAOAddresses);
             loadCompanyData();
         }
     }, [chainIds, web3Loading]);
@@ -73,7 +76,7 @@ export default function HomePage(): ReactElement {
         let i=0;
 
         console.log("Loading company data");
-        let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoAbi, companyFactoryDao, {
+        let companyFactoryContract = new web3.eth.Contract(companyFactoryDaoABI, companyFactoryDaoAddress, {
             from: accountId
         });
         let companyDaoAddresses = await companyFactoryContract.methods.getCompanyDaos().call();
@@ -82,7 +85,7 @@ export default function HomePage(): ReactElement {
         console.log(companyDaoAddresses.length);
 
         for (const address in companyDaoAddresses){
-                let companyContract = new web3.eth.Contract(companyDaoAbi, companyDaoAddresses[address], {
+                let companyContract = new web3.eth.Contract(companyDaoABI, companyDaoAddresses[address], {
                     from: accountId
                 });
                 let title = await companyContract.methods.title().call();
@@ -101,7 +104,7 @@ export default function HomePage(): ReactElement {
                 if (_activeBounties_.length > 0){
                     for (const bounty in _activeBounties_){
 
-                        let bountyContract = new web3.eth.Contract(bountyAbi, _activeBounties_[bounty], {
+                        let bountyContract = new web3.eth.Contract(await bountyABI, _activeBounties_[bounty], {
                             from: accountId
                         });
 
@@ -122,11 +125,11 @@ export default function HomePage(): ReactElement {
         setActiveBounties(_activeBounties);
         setLoadingCompanyData(false);
     }
-    async function fetchAuditorDaoData(auditorDAOAddresses: string[], AuditorDaoABI: AbiItem[]){
+    async function fetchAuditorDaoData(auditorDAOAddresses: string[]){
         let tempHolder = []
         await new Promise(r => setTimeout(r, 2000));
         for (const index in auditorDAOAddresses) {
-            const contract = new web3.eth.Contract(AuditorDaoABI, auditorDAOAddresses[index], {
+            const contract = new web3.eth.Contract(await auditorDaoABI, auditorDAOAddresses[index], {
                 from: accountId
             });
             const titleDao = await contract.methods.title().call();
@@ -142,7 +145,7 @@ export default function HomePage(): ReactElement {
             })
             setLoadingAuditorInfo(false);
         }
-        setAuditorInfo(tempHolder)
+        setAuditorInfo(tempHolder);
     }
 
     return (
