@@ -146,7 +146,7 @@ export default function Menu(): ReactElement {
         console.log("Address", selectedCompany);
         try{
             const resCreate = await contract.methods.addNewBounty(selectedCompany, selectedCompany, Math.floor(Date.now() + 3600),
-                "testtttttttesttttttttesttttttt", 1223, bugBountyTitle, bugBountyDescription).send({from: accountId});
+                "testtttttttesttttttttesttttttt", 122, bugBountyTitle, bugBountyDescription).send({from: accountId});
 
             console.log(resCreate);
             setIsAlert({

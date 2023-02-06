@@ -7,11 +7,12 @@ import {getFieldContent} from '@utils/form'
 import Loader from "@shared/atoms/Loader";
 import Button from "@shared/atoms/Button";
 import lighthouse from "@lighthouse-web3/sdk";
-import {companyDaoAbi, bountyAbi, bountyAddress} from "../../../../app.config";
+import {companyDaoABI, bountyABI, bountyFactoryABI} from '@utils/abi';
 import {useWeb3} from "@context/Web3";
 import {ethers} from "ethers";
 import {sleep} from "@utils/index";
 import {FormPublishData} from "../_types";
+import {array} from "yup";
 
 export default function MetadataFields(): ReactElement {
     const {accountId, web3, web3Loading, web3Provider} = useWeb3()
@@ -39,7 +40,7 @@ export default function MetadataFields(): ReactElement {
 
         await sleep(2000);
 
-        let contract = new web3.eth.Contract(companyDaoAbi, "0x540627043EDaD520DbACE3FaF982ec553097275E", {
+        let contract = new web3.eth.Contract(companyDaoABI, "0x540627043EDaD520DbACE3FaF982ec553097275E", {
             from: accountId
         });
 
@@ -59,12 +60,16 @@ export default function MetadataFields(): ReactElement {
             signedMessage
         );
 
-        contract = new web3.eth.Contract(bountyAbi, bountyAddress[0], {
+        contract = new web3.eth.Contract(bountyABI, window.location.search.replace("?address=", ""), {
             from: accountId
         });
 
         let submitRes = await contract.methods.submitVulnerability(accountId, output.data.Hash, 123).send();
         console.log(submitRes, values)
+
+        alert("Vulnerability Submitted");
+        window.location.reload();
+
     }
 
     return (
