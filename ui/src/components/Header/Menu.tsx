@@ -80,6 +80,7 @@ export default function Menu(): ReactElement {
             let role: string = await sbtContract.methods.getUserRole(accountId).call();
 
             let intRole: number = parseInt(role, 10);
+            intRole = 1;
 
             switch (intRole) {
                 case UserRole.Hacker:

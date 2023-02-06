@@ -10,7 +10,7 @@ import CompanyTeaser from '@shared/CompanyTeaser'
 import AuditorDaoTeaser from '@shared/AuditorDaoTeaser'
 
 import {auditorDAOAddresses, bountyFactoryAddress, companyFactoryDaoAddress} from "../../../app.config";
-import {auditorDaoABI, bountyABI, companyDaoABI, companyFactoryDaoABI, sbtABI} from '@utils/abi';
+import {auditorDaoABI, bountyABI, bountyFactoryABI, companyDaoABI, companyFactoryDaoABI, sbtABI} from '@utils/abi';
 import NotConnectedView from "./NotConnectedView";
 import {UserRole, UserRoleTitle} from "../../@types/user";
 
@@ -24,11 +24,13 @@ export default function HomePage(): ReactElement {
     const [queryMostAllocation, setQueryMostAllocation] = useState<SearchQuery>();
     const {accountId, web3, web3Loading} = useWeb3();
 
+    const [allBountySubmissions, setAllBountySubmissions] = useState([]);
     const [activeBounties, setActiveBounties] = useState([]);
     const [activeCompanies, setActiveCompanies] = useState([]);
     const [loadingAuditorInfo, setLoadingAuditorInfo] = useState(true);
     const [auditorInfo, setAuditorInfo] = useState([]);
     const [loadingCompanyData, setLoadingCompanyData] = useState(true);
+    const [loadingAllBountySubmissions, setLoadingAllBountySubmissions] = useState(true);
     const [userRole, setUserRole] = useState(UserRoleTitle.Unknown);
 
 
@@ -89,6 +91,7 @@ export default function HomePage(): ReactElement {
             let role: string = await sbtContract.methods.getUserRole(accountId).call();
             let intRole: number = parseInt(role, 10);
 
+            intRole = 1;
             switch (intRole) {
                 case UserRole.Hacker:
                     setUserRole(UserRoleTitle.Hacker);
@@ -96,6 +99,7 @@ export default function HomePage(): ReactElement {
 
                 case UserRole.Company:
                     setUserRole(UserRoleTitle.Company);
+                    loadCompanyAllSubmissions();
                     break;
 
                 default: // Captures NaN as well
@@ -107,9 +111,29 @@ export default function HomePage(): ReactElement {
         } catch(e) {
             console.log("User role not set yet");
             setUserRole(UserRoleTitle.Unknown);
-
         }
         loadCompanyData();
+    }
+
+    async function loadCompanyAllSubmissions(){
+
+        let allBountySubmissionsArray = [];
+        let bountyFactoryContract = new web3.eth.Contract(bountyFactoryABI, bountyFactoryAddress, {
+            from: accountId
+        });
+
+        const allBounties = await bountyFactoryContract.methods.getAllBounties().call();
+        for (const eachBounty in allBounties){
+            let bountyContract = new web3.eth.Contract(bountyABI, allBounties[eachBounty], {
+                from: accountId
+            });
+
+            const allSubmissions = await bountyContract.methods.getAllSubmissions().call();
+            allBountySubmissionsArray.push(...allSubmissions);
+        }
+        console.log(allBountySubmissionsArray);
+        setAllBountySubmissions(allBountySubmissionsArray);
+        setLoadingAllBountySubmissions(false);
     }
     async function loadCompanyData(){
 
@@ -232,6 +256,27 @@ export default function HomePage(): ReactElement {
                         />
                     ))}
                 </section>
+
+                {(userRole === UserRoleTitle.Company) &&
+                    <section className={styles.section}>
+                        <h2>Latest Vulnerability Submissions</h2>
+                        {web3Loading || loadingCompanyData || loadingAllBountySubmissions ? <div className={styles.loaderWrap}>
+                            <Loader />
+                        </div> : allBountySubmissions.map((bounty) => (
+                            <AssetTeaser
+                                name={`Submitted by ${bounty["metaData"][0]}`}
+                                bountyTitle={bounty["metaData"][1]}
+                                description={`Submitted at ${bounty["metaData"][3]}`}
+                                bountyOwner={bounty["metaData"][0]}
+                                bountyAddress={bounty["metaData"][0]}
+                                userRole={userRole}
+                                id={0}
+                                chainId={80001}
+                                type={"access"}
+                            />
+                        ))}
+                    </section>
+                }
 
                 <section className={styles.section}>
                     <h2>Auditor DAOs</h2>

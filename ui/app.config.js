@@ -24,7 +24,7 @@ module.exports = {
 
   // Required dAPP contracts for running application
   auditorDAOAddresses: ["0xD69BCF242950D4bE4264aacF6c245E6799B80Ce6"],
-  bountyFactoryAddress: "0xdCCed393B5c95F75Ed5982b7dcFF934f3BC25719",
+  bountyFactoryAddress: "0x125375f1F041fD2eD3a4718e289Ec3c14f522259",
   companyFactoryDaoAddress: "0xdEF019B9b7c38006ff29484186360594807eAe6D",
   hackerSolBoundAddress: "0xe59a12c01c63445b3c4c28C79F4F38bfA007db59",
 
